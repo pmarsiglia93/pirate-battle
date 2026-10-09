@@ -321,3 +321,102 @@ progress {
     margin: 7px;
   }
 }
+
+.pause-dialog {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  max-width: 100vw;
+  max-height: 95dvh;
+  overflow: auto;
+}
+.pause-dialog::backdrop {
+  background: #061b2bc4;
+}
+.result-score {
+  font-size: 80px;
+  color: #ffd478;
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 22px 0;
+}
+.registration {
+  font-size: 13px;
+  color: #daebde;
+}
+.touch-controls {
+  display: none;
+}
+.touch-button {
+  width: 54px;
+  height: 54px;
+  padding: 12px;
+  border: 0;
+  background: url('/assets/png/retina/ui/controls/button_round_normal.png')
+    center/contain no-repeat;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.touch-button:active {
+  background-image: url('/assets/png/retina/ui/controls/button_round_pressed.png');
+}
+.touch-button img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+.rotate-notice {
+  display: none;
+}
+@media (pointer: coarse) {
+  .touch-controls {
+    display: grid;
+    grid-template-columns: repeat(3, 54px) 1fr repeat(3, 54px);
+    position: absolute;
+    left: max(12px, env(safe-area-inset-left));
+    right: max(12px, env(safe-area-inset-right));
+    bottom: max(12px, env(safe-area-inset-bottom));
+    z-index: 2;
+    gap: 6px;
+    pointer-events: none;
+  }
+  .touch-button {
+    pointer-events: auto;
+  }
+  .touch-port {
+    grid-column: 5;
+  }
+  .game-screen > .controls-legend {
+    display: none;
+  }
+  .arena-host {
+    width: min(100%, calc((100dvh - 72px) * 16 / 9));
+  }
+  .touch-forward,
+  .touch-front {
+    transform: translateY(-28px);
+  }
+}
+@media (pointer: coarse) and (orientation: portrait) {
+  .rotate-notice {
+    position: fixed;
+    inset: 0;
+    background: #102d3df5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    text-align: center;
+    padding: 24px;
+  }
+  .rotate-notice > span {
+    font-size: 80px;
+  }
+  .touch-controls {
+    display: none;
+  }
+}

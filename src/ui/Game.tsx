@@ -1,17 +1,31 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import type { MatchOptions } from '../game/config/gameConfig';
 import { Simulation } from '../game/core/simulation';
+import type { GameState } from '../game/core/types';
 import { FixedClock } from '../game/core/clock';
+import { testMode } from '../game/core/testApi';
 import { createGameStore } from '../game/bridge/gameStore';
 import { bindKeyboard } from '../game/input/keyboard';
 import { PixiRenderer } from '../game/render/PixiRenderer';
+import {
+  isMuted,
+  setMuted,
+  playEvents,
+  stopAudio,
+  unlockAudio,
+} from '../game/render/audio';
 import { Controls } from './components/Controls';
+import { PauseDialog } from './components/PauseDialog';
+import { TouchControls } from './components/TouchControls';
+import { formatTime } from './Result';
 export function Game({
   options,
   onExit,
+  onFinish,
 }: {
   options: MatchOptions;
   onExit: () => void;
+  onFinish: (state: GameState) => void;
 }) {
   const [simulation] = useState(
     () =>
@@ -24,18 +38,34 @@ export function Game({
   const hud = useSyncExternalStore(store.subscribe, store.getSnapshot);
   const host = useRef<HTMLDivElement>(null);
   const [error, setError] = useState(false);
+  const [muted, updateMuted] = useState(isMuted);
   const clock = useRef<FixedClock | null>(null);
+  const finished = useRef(false);
+  const finishRef = useRef(onFinish);
+  finishRef.current = onFinish;
   const pause = () => {
     simulation.pause();
     clock.current?.reset();
     store.publish(true);
+  };
+  const resume = () => {
+    simulation.resume();
+    clock.current?.reset();
+    store.publish(true);
+    host.current?.focus();
+    unlockAudio();
   };
   useEffect(() => {
     let cancelled = false;
     const renderer = new PixiRenderer();
     const gameClock = new FixedClock((dt) => {
       simulation.step(dt);
+      playEvents(simulation.events);
       store.publish();
+      if (simulation.state.status === 'ended' && !finished.current) {
+        finished.current = true;
+        finishRef.current(simulation.snapshot());
+      }
     });
     clock.current = gameClock;
     const stop = () => {
@@ -48,7 +78,9 @@ export function Game({
     };
     const unbind = bindKeyboard(
       () => simulation.input,
-      () => simulation.state.status === 'running',
+      () =>
+        simulation.state.status === 'running' &&
+        !document.querySelector('dialog[open]'),
       stop,
     );
     window.addEventListener('blur', stop);
@@ -61,10 +93,26 @@ export function Game({
           return;
         }
         renderer.render(simulation.state);
+        host.current?.focus();
+        if (testMode())
+          window.__PIRATE_TEST__ = {
+            advance: (ms) => {
+              if (simulation.state.status === 'running') gameClock.advance(ms);
+              else gameClock.reset();
+              renderer.render(simulation.state);
+            },
+            getState: () => simulation.snapshot(),
+            setSeed: (seed) => {
+              if (simulation.state.elapsed !== 0)
+                throw new Error('Seed can only change before the first step');
+              simulation.rng.setSeed(seed);
+            },
+            getResources: () => renderer.stats(),
+          };
         renderer.app.ticker.add((ticker) => {
-          if (simulation.state.status === 'running')
+          if (!testMode() && simulation.state.status === 'running')
             gameClock.frame(ticker.elapsedMS);
-          else gameClock.reset();
+          else if (simulation.state.status !== 'running') gameClock.reset();
           renderer.render(simulation.state);
         });
       })
@@ -78,51 +126,63 @@ export function Game({
       window.removeEventListener('blur', stop);
       document.removeEventListener('visibilitychange', visibility);
       gameClock.reset();
+      stopAudio();
       renderer.destroy();
+      if (testMode() && simulation.state.status !== 'ended')
+        delete window.__PIRATE_TEST__;
     };
   }, [simulation, store]);
   return (
     <div className="game-screen">
       <div className="hud">
-        <span>♥ {hud.hp} / 100</span>
+        <span className="health-counter">♥ {hud.hp} / 100</span>
         <span>★ {hud.score}</span>
-        <span>◷ {hud.remaining}s</span>
+        <span>◷ {formatTime(hud.remaining)}</span>
+        <button
+          aria-label={muted ? 'Unmute sound' : 'Mute sound'}
+          onClick={() => {
+            setMuted(!muted);
+            updateMuted(!muted);
+            unlockAudio();
+          }}
+        >
+          {muted ? 'Sound off' : 'Sound on'}
+        </button>
         <button onClick={pause}>Pause</button>
       </div>
-      <div className="arena-host" ref={host} />
+      <div className="arena-host" ref={host} tabIndex={-1} />
+      <TouchControls simulation={simulation} />
       <Controls />
       <p className="sr-only" aria-live="polite">
         {hud.announcement}
       </p>
+      <dl className="sr-only" aria-label="Battle status">
+        <dt>Score</dt>
+        <dd>{hud.score}</dd>
+        <dt>Time remaining</dt>
+        <dd>{hud.remaining}</dd>
+        <dt>State</dt>
+        <dd>{hud.status}</dd>
+      </dl>
       {error && (
-        <p role="alert">
-          Unable to start the renderer.{' '}
-          <button onClick={onExit}>Main Menu</button>
-        </p>
-      )}
-      {hud.status !== 'running' && (
         <div className="overlay">
           <section className="panel">
-            <h1>{hud.status === 'paused' ? 'Paused' : 'Battle complete'}</h1>
-            <p>Score: {hud.score}</p>
-            {hud.status === 'paused' && (
-              <button
-                className="primary"
-                onClick={() => {
-                  simulation.resume();
-                  clock.current?.reset();
-                  store.publish(true);
-                }}
-              >
-                Resume
-              </button>
-            )}
+            <p role="alert">Unable to start the renderer.</p>
             <button className="primary" onClick={onExit}>
               Main Menu
             </button>
           </section>
         </div>
       )}
+      {hud.status === 'paused' && (
+        <PauseDialog onResume={resume} onExit={onExit} />
+      )}
+      <div className="rotate-notice">
+        <span>↻</span>
+        <h1>Turn the tide</h1>
+        <p>Rotate your device to landscape to play.</p>
+        <button onClick={onExit}>Main Menu</button>
+      </div>
     </div>
   );
 }

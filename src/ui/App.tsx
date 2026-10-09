@@ -1,26 +1,80 @@
-import { Game } from './Game';
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { loadOptions, saveOptions } from '../persistence/options';
+import {
+  loadLastResult,
+  saveLastResult,
+  playerId,
+} from '../persistence/lastResult';
+import { configKey, type MatchRecord } from '../api/contracts';
+import type { GameState } from '../game/core/types';
 import { loadAssets } from '../game/render/assets';
+import { unlockAudio } from '../game/render/audio';
 import { Options } from './Options';
+import { Game } from './Game';
+import { Result } from './Result';
 import { Controls } from './components/Controls';
 export function App() {
-  const [screen, setScreen] = useState('menu');
+  const [result, setResult] = useState(loadLastResult);
+  const [screen, setScreen] = useState(() =>
+    loadLastResult() ? 'result' : 'menu',
+  );
   const [options, setOptions] = useState(loadOptions);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState(false);
+  const attempt = useRef(0);
+  const matchId = useRef('');
+  useEffect(
+    () => () => {
+      attempt.current++;
+    },
+    [],
+  );
   const play = async () => {
+    unlockAudio();
+    const token = ++attempt.current;
     setScreen('loading');
     setError(false);
+    setProgress(0);
     try {
-      await loadAssets(setProgress);
-      setScreen('ready');
+      await loadAssets((value) => {
+        if (token === attempt.current) setProgress(value);
+      });
+      if (token !== attempt.current) return;
+      matchId.current = crypto.randomUUID();
+      setScreen('game');
     } catch {
-      setError(true);
+      if (token === attempt.current) setError(true);
     }
   };
-  if (screen === 'ready')
-    return <Game options={options} onExit={() => setScreen('menu')} />;
+  const menu = () => {
+    attempt.current++;
+    setScreen('menu');
+  };
+  const finish = useCallback((state: GameState) => {
+    const record: MatchRecord = {
+      matchId: matchId.current,
+      playerId: playerId(),
+      playerName: 'Captain Jack',
+      createdAt: new Date().toISOString(),
+      score: state.score,
+      durationMs: Math.round(state.elapsed * 1000),
+      endReason: state.endReason!,
+      config: { ...state.config },
+      configKey: configKey(state.config),
+    };
+    saveLastResult(record);
+    setResult(record);
+    setScreen('result');
+  }, []);
+  if (screen === 'game')
+    return (
+      <Game
+        key={matchId.current}
+        options={options}
+        onExit={menu}
+        onFinish={finish}
+      />
+    );
   return (
     <main className="shell">
       {screen === 'menu' ? (
@@ -53,19 +107,21 @@ export function App() {
             setOptions(value);
             setScreen('menu');
           }}
-          onBack={() => setScreen('menu')}
+          onBack={menu}
         />
+      ) : screen === 'result' && result ? (
+        <Result record={result} onPlay={() => void play()} onMenu={menu} />
       ) : (
         <section className="panel">
-          <h1>
-            {screen === 'ready' ? 'Ready to sail' : 'Preparing your ship'}
-          </h1>
+          <h1>Preparing your ship</h1>
           {error ? (
             <>
               <p role="alert">
                 Unable to load the game assets. Check your connection.
               </p>
-              <button onClick={() => void play()}>Retry</button>
+              <button className="primary" onClick={() => void play()}>
+                Retry
+              </button>
             </>
           ) : (
             <>
@@ -73,7 +129,7 @@ export function App() {
               <p>{Math.round(progress * 100)}%</p>
             </>
           )}
-          <button className="primary" onClick={() => setScreen('menu')}>
+          <button className="secondary" onClick={menu}>
             Main Menu
           </button>
         </section>
