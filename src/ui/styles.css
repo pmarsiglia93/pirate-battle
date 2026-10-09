@@ -420,3 +420,270 @@ progress {
     display: none;
   }
 }
+
+.menu-tabs {
+  display: flex;
+  gap: 8px;
+}
+.menu-tabs .secondary {
+  font-size: 12px;
+  height: 42px;
+}
+.menu {
+  padding-top: 30px;
+  padding-bottom: 25px;
+}
+.network-panel {
+  text-align: left;
+  font-size: 11px;
+  margin-top: 8px;
+  color: #dfdfcf;
+}
+.network-panel summary {
+  cursor: pointer;
+  text-align: center;
+  padding: 8px;
+}
+.network-panel label {
+  display: block;
+  margin: 10px 0;
+}
+.network-panel select {
+  font-size: 12px;
+}
+.network-panel > div {
+  display: flex;
+  gap: 6px;
+  margin: 8px 0;
+}
+.network-panel button {
+  font-size: 10px;
+  padding: 8px;
+}
+.network-panel small {
+  display: block;
+}
+.log {
+  width: min(940px, 96vw);
+  padding: 24px 32px;
+}
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+.tabs button {
+  width: 210px;
+  height: 48px;
+  font-size: 16px;
+  margin: 4px 0;
+}
+.log-description {
+  font-size: 12px;
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d0dfdf;
+}
+.log-description label {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+.log-description select {
+  width: 250px;
+  font-size: 12px;
+}
+.query-status {
+  height: 23px;
+  font-size: 11px;
+  color: #cadddf;
+}
+.table-scroll {
+  overflow: auto;
+  min-height: 244px;
+}
+table {
+  border-collapse: separate;
+  border-spacing: 0 7px;
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+}
+th {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #bdcfd7;
+  padding: 8px 14px;
+}
+td {
+  padding: 13px 14px;
+  background: #102734c9;
+}
+td:first-child {
+  border-radius: 5px 0 0 5px;
+  color: #ffd783;
+}
+td:last-child {
+  border-radius: 0 5px 5px 0;
+  font-size: 11px;
+}
+td:nth-child(3) {
+  color: #ffdb8c;
+}
+.you td {
+  background: #625731a0;
+}
+.you-badge {
+  font-size: 8px;
+  margin-left: 8px;
+  background: #756233;
+  border: 1px solid #b29656;
+  border-radius: 3px;
+  padding: 2px 4px;
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  font-size: 11px;
+  margin: 15px;
+}
+.pagination button {
+  border-radius: 50%;
+  padding: 7px 11px;
+}
+.empty-state,
+.query-error {
+  min-height: 180px;
+  padding: 40px 10px;
+}
+.network-warning {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  background: #572d22;
+  font-size: 12px;
+  padding: 8px;
+  margin: 0;
+  z-index: 50;
+}
+@media (max-height: 700px) and (min-width: 800px) {
+  .menu {
+    padding: 18px 28px;
+    border-width: 18px;
+  }
+  .menu .mascot {
+    width: 32px;
+    margin-top: 5px;
+  }
+  .menu > p:not(.eyebrow) {
+    margin: 8px 0;
+  }
+  .menu .primary {
+    height: 49px;
+    margin: 9px auto;
+  }
+  .menu .title {
+    max-width: 290px;
+  }
+  .menu .eyebrow {
+    margin: 8px 0 12px;
+  }
+}
+@media (max-height: 550px) {
+  .menu-tabs,
+  .network-panel {
+    grid-column: 1/-1;
+  }
+  .menu-tabs .secondary {
+    height: 36px;
+    margin: 3px auto;
+  }
+  .network-panel summary {
+    padding: 3px;
+  }
+  .log {
+    padding: 8px 24px;
+  }
+  .log h1 {
+    font-size: 22px;
+  }
+  .tabs button {
+    height: 36px;
+    font-size: 13px;
+  }
+  .log-description {
+    min-height: 38px;
+  }
+  .log-description select {
+    padding: 5px;
+  }
+  .query-status {
+    height: 17px;
+  }
+  .table-scroll {
+    min-height: 125px;
+    max-height: 140px;
+  }
+  table {
+    font-size: 11px;
+    border-spacing: 0 3px;
+  }
+  td {
+    padding: 7px 12px;
+  }
+  th {
+    padding: 5px 12px;
+  }
+  .pagination {
+    margin: 5px;
+  }
+  .log > .primary {
+    height: 39px;
+    margin: 6px auto;
+  }
+  .log .empty-state,
+  .log .query-error {
+    min-height: 120px;
+    padding: 10px;
+  }
+  .menu .network-panel[open] {
+    max-height: 140px;
+    overflow: auto;
+  }
+}
+@media (max-width: 500px) {
+  .log {
+    padding: 18px 10px;
+  }
+  .tabs {
+    gap: 8px;
+  }
+  .tabs button {
+    font-size: 12px;
+    height: 40px;
+  }
+  .log-description label {
+    display: block;
+  }
+  .log-description select {
+    display: block;
+    margin: 8px auto;
+  }
+  td,
+  th {
+    padding: 9px 8px;
+  }
+  table {
+    font-size: 12px;
+  }
+  .menu-tabs {
+    gap: 4px;
+  }
+}

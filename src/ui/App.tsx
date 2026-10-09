@@ -1,3 +1,6 @@
+import { useSubmissions } from '../api/mutations';
+import { CaptainsLog } from './CaptainsLog';
+import { NetworkPanel } from './NetworkPanel';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { loadOptions, saveOptions } from '../persistence/options';
 import {
@@ -14,6 +17,9 @@ import { Game } from './Game';
 import { Result } from './Result';
 import { Controls } from './components/Controls';
 export function App() {
+  const submissions = useSubmissions();
+  const submitRef = useRef(submissions.submit);
+  submitRef.current = submissions.submit;
   const [result, setResult] = useState(loadLastResult);
   const [screen, setScreen] = useState(() =>
     loadLastResult() ? 'result' : 'menu',
@@ -63,6 +69,7 @@ export function App() {
       configKey: configKey(state.config),
     };
     saveLastResult(record);
+    submitRef.current(record);
     setResult(record);
     setScreen('result');
   }, []);
@@ -98,7 +105,18 @@ export function App() {
           />
           <p>Navigate the islands. Survive the battle.</p>
           <Controls />
+          <div className="menu-tabs">
+            <button className="secondary" onClick={() => setScreen('ranking')}>
+              Ranking
+            </button>
+            <button className="secondary" onClick={() => setScreen('history')}>
+              Match History
+            </button>
+          </div>
+          <NetworkPanel onRetry={submissions.retry} />
         </section>
+      ) : screen === 'ranking' || screen === 'history' ? (
+        <CaptainsLog initialTab={screen} options={options} onBack={menu} />
       ) : screen === 'options' ? (
         <Options
           options={options}
@@ -110,7 +128,19 @@ export function App() {
           onBack={menu}
         />
       ) : screen === 'result' && result ? (
-        <Result record={result} onPlay={() => void play()} onMenu={menu} />
+        <Result
+          record={result}
+          status={submissions.statuses[result.matchId] ?? 'Saved'}
+          onRetry={
+            ['Pending', 'Failed'].includes(
+              submissions.statuses[result.matchId] ?? '',
+            )
+              ? submissions.retry
+              : undefined
+          }
+          onPlay={() => void play()}
+          onMenu={menu}
+        />
       ) : (
         <section className="panel">
           <h1>Preparing your ship</h1>
