@@ -1,4 +1,5 @@
 export type EventKind =
+  | 'wreck'
   | 'fire'
   | 'splash'
   | 'hit'
@@ -9,6 +10,8 @@ export type EventKind =
   | 'end';
 export interface GameEvent {
   kind: EventKind;
+  sprite?: number;
+  angle?: number;
   x: number;
   y: number;
 }

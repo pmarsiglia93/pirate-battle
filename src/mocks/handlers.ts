@@ -72,7 +72,7 @@ function validRecord(value: unknown): value is MatchRecord {
   );
 }
 export const handlers = [
-  http.get('/api/ranking', async ({ request }) => {
+  http.get('*/api/ranking', async ({ request }) => {
     const url = new URL(request.url);
     const error = await failure(
       'ranking',
@@ -87,7 +87,7 @@ export const handlers = [
             .sort(compareMatches);
     return HttpResponse.json(paginate(items, url));
   }),
-  http.get('/api/players/:playerId/matches', async ({ params, request }) => {
+  http.get('*/api/players/:playerId/matches', async ({ params, request }) => {
     const url = new URL(request.url);
     const error = await failure(
       'history',
@@ -106,7 +106,7 @@ export const handlers = [
             );
     return HttpResponse.json(paginate(items, url));
   }),
-  http.put('/api/matches/:matchId', async ({ params, request }) => {
+  http.put('*/api/matches/:matchId', async ({ params, request }) => {
     const error = await failure('register');
     if (error) return error;
     let body: unknown;

@@ -573,7 +573,7 @@ td:nth-child(3) {
   margin: 0;
   z-index: 50;
 }
-@media (max-height: 700px) and (min-width: 800px) {
+@media (max-height: 800px) and (min-width: 800px) {
   .menu {
     padding: 18px 28px;
     border-width: 18px;
@@ -685,5 +685,31 @@ td:nth-child(3) {
   }
   .menu-tabs {
     gap: 4px;
+  }
+}
+
+@media (max-height: 550px) {
+  .result {
+    padding: 14px 32px;
+  }
+  .result .eyebrow {
+    margin: 0;
+  }
+  .result h1 {
+    margin: 4px 0;
+  }
+  .result-score {
+    font-size: 54px;
+    margin: 6px 0;
+  }
+  .result p {
+    margin: 6px 0;
+  }
+  .result .primary {
+    height: 40px;
+    margin: 8px auto;
+  }
+  .result .registration {
+    font-size: 12px;
   }
 }

@@ -5,6 +5,7 @@ import { landTiles, islands } from '../world/arena';
 import { texture } from './assets';
 import { SpritePool } from './spritePool';
 interface ShipView {
+  lastHp: number;
   root: Container;
   sprite: Sprite;
   bar: Graphics;
@@ -91,9 +92,11 @@ export class PixiRenderer {
       const e = effectsMap.get(id)!,
         progress = 1 - e.life / e.maxLife;
       s.texture = texture(
-        e.kind === 'hit' || e.kind === 'damage'
-          ? 'ship_parts/wood_1'
-          : `effects/explosion_${Math.min(3, 1 + Math.floor(progress * 3))}`,
+        e.kind === 'wreck'
+          ? `ships/ship_${e.sprite}`
+          : e.kind === 'hit' || e.kind === 'damage'
+            ? 'ship_parts/wood_1'
+            : `effects/explosion_${Math.min(3, 1 + Math.floor(progress * 3))}`,
       );
       s.position.set(e.x, e.y);
       s.width = s.height =
@@ -105,6 +108,11 @@ export class PixiRenderer {
       s.alpha = 1 - progress;
       s.tint = e.kind === 'splash' ? 0x8adce8 : 0xffffff;
       s.rotation = e.kind === 'hit' ? progress * 5 : 0;
+      if (e.kind === 'wreck') {
+        s.width = 55;
+        s.height = 96;
+        s.rotation = (e.angle ?? 0) + Math.PI / 2;
+      }
     });
     const shake = state.effects.some((e) => e.kind === 'damage')
       ? Math.sin(state.elapsed * 80) * gameConfig.effects.shake
@@ -120,7 +128,7 @@ export class PixiRenderer {
         fire = root.addChild(new Sprite(texture('effects/fire_1')));
       sprite.anchor.set(0.5);
       fire.anchor.set(0.5);
-      view = { root, sprite, bar, fire };
+      view = { root, sprite, bar, fire, lastHp: -1 };
       this.ships.set(ship.id, view);
     }
     const base = ship.kind === 'player' ? 2 : ship.kind === 'chaser' ? 3 : 5,
@@ -131,12 +139,15 @@ export class PixiRenderer {
     view.sprite.height = 96;
     view.sprite.rotation = ship.angle + Math.PI / 2;
     view.root.position.set(ship.x, ship.y);
-    view.bar
-      .clear()
-      .roundRect(-28, -65, 56, 7, 3)
-      .fill(0x152e37)
-      .roundRect(-26, -63, (52 * ship.hp) / ship.maxHp, 3, 1)
-      .fill(ship.kind === 'player' ? 0x79e49a : 0xf46b4e);
+    if (view.lastHp !== ship.hp) {
+      view.lastHp = ship.hp;
+      view.bar
+        .clear()
+        .roundRect(-28, -65, 56, 7, 3)
+        .fill(0x152e37)
+        .roundRect(-26, -63, (52 * ship.hp) / ship.maxHp, 3, 1)
+        .fill(ship.kind === 'player' ? 0x79e49a : 0xf46b4e);
+    }
     view.fire.visible = ship.hp / ship.maxHp <= 0.33;
     view.fire.texture = texture(
       `effects/fire_${(Math.floor(time * 8) % 2) + 1}`,

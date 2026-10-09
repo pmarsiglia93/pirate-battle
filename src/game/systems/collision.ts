@@ -14,6 +14,14 @@ export function damage(
     y: target.y,
   });
   if (target.hp === 0) {
+    ctx.emit({
+      kind: 'wreck',
+      x: target.x,
+      y: target.y,
+      angle: target.angle,
+      sprite:
+        target.kind === 'player' ? 20 : target.kind === 'chaser' ? 21 : 23,
+    });
     ctx.emit({ kind: 'explosion', x: target.x, y: target.y });
     if (byPlayer && target.kind !== 'player') {
       ctx.state.score++;
@@ -24,6 +32,13 @@ export function damage(
 export function ram(ctx: WorldContext, enemy: Ship): void {
   if (enemy.hp <= 0 || ctx.state.player.hp <= 0) return;
   enemy.hp = 0;
+  ctx.emit({
+    kind: 'wreck',
+    x: enemy.x,
+    y: enemy.y,
+    angle: enemy.angle,
+    sprite: 21,
+  });
   ctx.emit({ kind: 'explosion', x: enemy.x, y: enemy.y });
   damage(ctx, ctx.state.player, gameConfig.chaser.impact, false);
 }

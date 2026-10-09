@@ -24,10 +24,11 @@ export const gameConfig = {
     bulletLife: 2,
   },
   spawn: { distance: 450, chaserChance: 0.55, attempts: 200 },
-  effects: { life: 0.65, flashLife: 0.14, shake: 5 },
+  effects: { wreckLife: 1.8, life: 0.65, flashLife: 0.14, shake: 5 },
   projectileRadius: 5,
 } as const;
 export function validOptions(value: MatchOptions): boolean {
+  if (!value || typeof value !== 'object') return false;
   return (
     Number.isFinite(value.sessionTime) &&
     Number.isFinite(value.spawnTime) &&

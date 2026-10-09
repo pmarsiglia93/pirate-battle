@@ -16,7 +16,11 @@ async function register(record: MatchRecord): Promise<MatchRecord> {
   if (!promise) {
     promise = client
       .put<MatchRecord>(`/matches/${record.matchId}`, record)
-      .then((response) => response.data);
+      .then((response) => {
+        if (response.data?.matchId !== record.matchId)
+          throw new Error('Invalid registration response');
+        return response.data;
+      });
     inFlight.set(record.matchId, promise);
   }
   try {

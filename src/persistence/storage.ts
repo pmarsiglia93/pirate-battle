@@ -1,7 +1,12 @@
 const memory = new Map<string, string>();
 export function read<T>(key: string, fallback: T): T {
+  let value = memory.get(key);
   try {
-    const value = localStorage.getItem(`pirate:${key}`) ?? memory.get(key);
+    value = localStorage.getItem(`pirate:${key}`) ?? value;
+  } catch {
+    /* Use the session fallback. */
+  }
+  try {
     return value ? (JSON.parse(value) as T) : fallback;
   } catch {
     return fallback;

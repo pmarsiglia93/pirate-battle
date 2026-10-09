@@ -1,6 +1,7 @@
 import { Assets, Texture } from 'pixi.js';
+const variant = devicePixelRatio >= 2 ? 'retina' : 'default';
 export const assetPath = (name: string): string =>
-  `/assets/png/${devicePixelRatio >= 2 ? 'retina' : 'default'}/${name}.png`;
+  `/assets/png/${variant}/${name}.png`;
 const names = [
   ...[2, 8, 14, 20, 3, 9, 15, 21, 5, 11, 17, 23].map((n) => `ships/ship_${n}`),
   ...[1, 2, 3, 17, 18, 19, 23, 24, 33, 34, 35, 49, 71, 73].map(
@@ -22,11 +23,15 @@ export async function loadAssets(
 ): Promise<void> {
   let loaded = 0;
   progress(0);
-  // Sequential loading makes failure/retry and progress deterministic; Assets caches successful textures.
-  for (const name of names) {
-    await Assets.load<Texture>(assetPath(name));
-    progress(++loaded / names.length);
-  }
+  Assets.setPreferences({ preferWorkers: false });
+  const results = await Promise.allSettled(
+    names.map(async (name) => {
+      await Assets.load<Texture>(assetPath(name));
+      progress(++loaded / names.length);
+    }),
+  );
+  if (results.some((result) => result.status === 'rejected'))
+    throw new Error('Asset loading failed');
 }
 export const texture = (name: string): Texture =>
   Assets.get<Texture>(assetPath(name));

@@ -11,6 +11,7 @@ export function PauseDialog({
     const dialog = ref.current!;
     const previous = document.activeElement;
     dialog.showModal();
+    dialog.querySelector('button')?.focus();
     return () => {
       dialog.close();
       if (previous instanceof HTMLElement) previous.focus();
@@ -21,6 +22,20 @@ export function PauseDialog({
       ref={ref}
       className="pause-dialog"
       aria-labelledby="pause-title"
+      onKeyDown={(event) => {
+        if (event.key !== 'Tab') return;
+        const buttons =
+          ref.current!.querySelectorAll<HTMLButtonElement>('button');
+        const first = buttons[0],
+          last = buttons[buttons.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first?.focus();
+        }
+      }}
       onCancel={(event) => {
         event.preventDefault();
         onResume();

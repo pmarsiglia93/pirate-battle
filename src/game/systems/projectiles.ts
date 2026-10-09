@@ -50,6 +50,7 @@ export function projectiles(ctx: WorldContext, dt: number): void {
     const hit = hits[0];
     if (hit && hit.t !== null && hit.t < wall) {
       damage(ctx, hit.target, bullet.damage, bullet.owner === 'player');
+      if (ctx.state.player.hp <= 0) break;
       continue;
     }
     bullet.x = x;

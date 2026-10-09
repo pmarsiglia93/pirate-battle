@@ -22,11 +22,17 @@ export class Simulation implements WorldContext {
   nextId = (): number => this.id++;
   emit = (event: GameEvent): void => {
     this.events.push(event);
-    if (['fire', 'hit', 'damage', 'explosion', 'splash'].includes(event.kind)) {
+    if (
+      ['fire', 'hit', 'damage', 'explosion', 'splash', 'wreck'].includes(
+        event.kind,
+      )
+    ) {
       const life =
-        event.kind === 'fire'
-          ? gameConfig.effects.flashLife
-          : gameConfig.effects.life;
+        event.kind === 'wreck'
+          ? gameConfig.effects.wreckLife
+          : event.kind === 'fire'
+            ? gameConfig.effects.flashLife
+            : gameConfig.effects.life;
       this.state.effects.push({
         ...event,
         id: this.nextId(),

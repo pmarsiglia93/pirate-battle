@@ -100,6 +100,7 @@ export function Game({
               if (simulation.state.status === 'running') gameClock.advance(ms);
               else gameClock.reset();
               renderer.render(simulation.state);
+              if (simulation.state.status !== 'ended') renderer.app.render();
             },
             getState: () => simulation.snapshot(),
             setSeed: (seed) => {
@@ -109,6 +110,11 @@ export function Game({
             },
             getResources: () => renderer.stats(),
           };
+        if (testMode()) {
+          renderer.app.stop();
+          renderer.app.render();
+          return;
+        }
         renderer.app.ticker.add((ticker) => {
           if (!testMode() && simulation.state.status === 'running')
             gameClock.frame(ticker.elapsedMS);
