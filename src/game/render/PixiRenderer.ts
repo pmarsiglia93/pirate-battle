@@ -1,0 +1,166 @@
+import { Application, Container, Graphics, Sprite } from 'pixi.js';
+import { gameConfig } from '../config/gameConfig';
+import type { GameState, Ship } from '../core/types';
+import { landTiles, islands } from '../world/arena';
+import { texture } from './assets';
+import { SpritePool } from './spritePool';
+interface ShipView {
+  root: Container;
+  sprite: Sprite;
+  bar: Graphics;
+  fire: Sprite;
+}
+export class PixiRenderer {
+  readonly app = new Application();
+  private scene = new Container();
+  private ships = new Map<number, ShipView>();
+  private bullets = new SpritePool(this.scene);
+  private effects = new SpritePool(this.scene);
+  private initialized = false;
+  private disposed = false;
+  async init(host: HTMLElement): Promise<void> {
+    await this.app.init({
+      width: gameConfig.world.width,
+      height: gameConfig.world.height,
+      resolution: Math.min(devicePixelRatio, 2),
+      autoDensity: true,
+      background: '#278da3',
+      antialias: true,
+      preference: 'webgl',
+    });
+    this.initialized = true;
+    if (this.disposed) {
+      this.destroy();
+      return;
+    }
+    host.appendChild(this.app.canvas);
+    this.app.canvas.setAttribute('aria-label', 'Pirate Battle arena');
+    this.app.stage.addChild(this.scene);
+    const { tile, width, height } = gameConfig.world;
+    for (let y = 0; y < height; y += tile)
+      for (let x = 0; x < width; x += tile) {
+        const s = new Sprite(texture('tiles/tile_73'));
+        s.position.set(x, y);
+        s.width = tile;
+        s.height = tile;
+        this.scene.addChild(s);
+      }
+    for (const tileInfo of landTiles) {
+      const s = new Sprite(texture(`tiles/tile_${tileInfo.sprite}`));
+      s.position.set(tileInfo.x, tileInfo.y);
+      s.width = tile;
+      s.height = tile;
+      this.scene.addChild(s);
+    }
+    for (const island of islands)
+      for (const [dx, dy, name] of [
+        [1.5, 1.2, 71],
+        [3, 2, 49],
+      ] as const) {
+        const s = new Sprite(texture(`tiles/tile_${name}`));
+        s.position.set((island.x + dx) * tile, (island.y + dy) * tile);
+        s.width = tile;
+        s.height = tile;
+        this.scene.addChild(s);
+      }
+  }
+  render(state: GameState): void {
+    if (!this.initialized || this.disposed) return;
+    const living = [state.player, ...state.enemies].filter(
+        (ship) => ship.hp > 0,
+      ),
+      ids = new Set(living.map((ship) => ship.id));
+    for (const [id, view] of this.ships)
+      if (!ids.has(id)) {
+        view.root.destroy({ children: true });
+        this.ships.delete(id);
+      }
+    for (const ship of living) this.drawShip(ship, state.elapsed);
+    const bulletMap = new Map(state.projectiles.map((b) => [b.id, b]));
+    this.bullets.sync(state.projectiles, (s, id) => {
+      const b = bulletMap.get(id)!;
+      s.texture = texture('ship_parts/cannon_ball');
+      s.position.set(b.x, b.y);
+      s.width = 12;
+      s.height = 12;
+      s.tint = b.owner === 'player' ? 0xffffff : 0xffba88;
+      s.alpha = 1;
+    });
+    const effectsMap = new Map(state.effects.map((e) => [e.id, e]));
+    this.effects.sync(state.effects, (s, id) => {
+      const e = effectsMap.get(id)!,
+        progress = 1 - e.life / e.maxLife;
+      s.texture = texture(
+        e.kind === 'hit' || e.kind === 'damage'
+          ? 'ship_parts/wood_1'
+          : `effects/explosion_${Math.min(3, 1 + Math.floor(progress * 3))}`,
+      );
+      s.position.set(e.x, e.y);
+      s.width = s.height =
+        e.kind === 'explosion'
+          ? 65 + progress * 60
+          : e.kind === 'splash'
+            ? 20 + progress * 40
+            : 30;
+      s.alpha = 1 - progress;
+      s.tint = e.kind === 'splash' ? 0x8adce8 : 0xffffff;
+      s.rotation = e.kind === 'hit' ? progress * 5 : 0;
+    });
+    const shake = state.effects.some((e) => e.kind === 'damage')
+      ? Math.sin(state.elapsed * 80) * gameConfig.effects.shake
+      : 0;
+    this.scene.position.set(shake, 0);
+  }
+  private drawShip(ship: Ship, time: number): void {
+    let view = this.ships.get(ship.id);
+    if (!view) {
+      const root = this.scene.addChild(new Container()),
+        sprite = root.addChild(new Sprite()),
+        bar = root.addChild(new Graphics()),
+        fire = root.addChild(new Sprite(texture('effects/fire_1')));
+      sprite.anchor.set(0.5);
+      fire.anchor.set(0.5);
+      view = { root, sprite, bar, fire };
+      this.ships.set(ship.id, view);
+    }
+    const base = ship.kind === 'player' ? 2 : ship.kind === 'chaser' ? 3 : 5,
+      stage =
+        ship.hp / ship.maxHp > 0.66 ? 0 : ship.hp / ship.maxHp > 0.33 ? 6 : 12;
+    view.sprite.texture = texture(`ships/ship_${base + stage}`);
+    view.sprite.width = 55;
+    view.sprite.height = 96;
+    view.sprite.rotation = ship.angle + Math.PI / 2;
+    view.root.position.set(ship.x, ship.y);
+    view.bar
+      .clear()
+      .roundRect(-28, -65, 56, 7, 3)
+      .fill(0x152e37)
+      .roundRect(-26, -63, (52 * ship.hp) / ship.maxHp, 3, 1)
+      .fill(ship.kind === 'player' ? 0x79e49a : 0xf46b4e);
+    view.fire.visible = ship.hp / ship.maxHp <= 0.33;
+    view.fire.texture = texture(
+      `effects/fire_${(Math.floor(time * 8) % 2) + 1}`,
+    );
+    view.fire.width = 24;
+    view.fire.height = 34;
+  }
+  stats(): { displayObjects: number; pooledSprites: number } {
+    const count = (c: Container): number =>
+      1 + c.children.reduce((sum, child) => sum + count(child), 0);
+    return {
+      displayObjects:
+        this.initialized && !this.disposed ? count(this.app.stage) : 0,
+      pooledSprites: this.bullets.size + this.effects.size,
+    };
+  }
+  destroy(): void {
+    this.disposed = true;
+    if (!this.initialized) return;
+    this.initialized = false;
+    this.app.destroy(
+      { removeView: true },
+      { children: true, texture: false, textureSource: false },
+    );
+    this.ships.clear();
+  }
+}

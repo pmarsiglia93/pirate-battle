@@ -245,3 +245,79 @@ progress {
     letter-spacing: 1px;
   }
 }
+
+.game-screen {
+  height: 100dvh;
+  background: #0b2632;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: max(8px, env(safe-area-inset-top))
+    max(10px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom))
+    max(10px, env(safe-area-inset-left));
+  overflow: hidden;
+}
+.hud {
+  width: min(1200px, 100%);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  justify-content: space-between;
+  height: 56px;
+  flex-shrink: 0;
+}
+.hud > span {
+  padding: 10px 20px;
+  background: url('/assets/png/retina/ui/hud/counter_panel.png') center/100%
+    100%;
+  min-width: 100px;
+  text-align: center;
+}
+.arena-host {
+  width: min(100%, calc((100dvh - 105px) * 16 / 9));
+  aspect-ratio: 16/9;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+}
+.arena-host canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: #071923ae;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+.game-screen > .controls-legend {
+  margin: 10px;
+}
+.game-screen .panel {
+  filter: none;
+}
+@media (max-height: 550px) {
+  .hud {
+    height: 42px;
+    gap: 8px;
+    font-size: 13px;
+  }
+  .hud > span {
+    padding: 8px 16px;
+  }
+  .hud button {
+    padding: 6px 12px;
+  }
+  .arena-host {
+    width: min(100%, calc((100dvh - 80px) * 16 / 9));
+  }
+  .game-screen > .controls-legend {
+    font-size: 9px;
+    margin: 7px;
+  }
+}

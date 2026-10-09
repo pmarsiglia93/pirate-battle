@@ -1,3 +1,4 @@
+import { Game } from './Game';
 import { useState } from 'react';
 import { loadOptions, saveOptions } from '../persistence/options';
 import { loadAssets } from '../game/render/assets';
@@ -18,6 +19,8 @@ export function App() {
       setError(true);
     }
   };
+  if (screen === 'ready')
+    return <Game options={options} onExit={() => setScreen('menu')} />;
   return (
     <main className="shell">
       {screen === 'menu' ? (
