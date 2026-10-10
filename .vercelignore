@@ -1,0 +1,12 @@
+node_modules
+dist
+reports
+test-results
+.git
+.vercel
+.agents
+.codex
+.aws
+.env
+.env.*
+.npmrc
