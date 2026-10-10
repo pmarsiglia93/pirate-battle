@@ -1,6 +1,6 @@
 # Release verification
 
-Verified 2026-10-10 (UTC) at commit `d81aac7`, which is the commit deployed.
+The full verification below ran on 2026-10-10 (UTC) at commit `d81aac7`. The difficulty option was added afterwards in `d22be24`, which is the commit now deployed; later commits change documentation only. For `d22be24` the working-tree typecheck, lint, 23 unit tests, build and the full Playwright suite (54 passed, 2 skipped, visual baselines unchanged) were rerun, and the live site was smoke-tested again. The clean-checkout, benchmark and memory runs were not repeated for it; the change does not touch rendering or teardown.
 
 ## Automated checks
 
@@ -47,6 +47,7 @@ Browser smoke test against the live URL, Chromium 156:
 - Pause freezes the timer, Resume restarts it, and exiting leaves zero canvases.
 - Mobile landscape with touch input sails the ship; portrait shows the rotate notice.
 - A completed match shows Battle complete, registers as Saved, survives a refresh and appears in Match History.
+- After the `d22be24` redeploy: Options offers Easy, Normal and Hard; an Easy match starts with that difficulty in its configuration, completes and registers as Saved.
 - No uncaught page errors, console errors, failed requests or HTTP errors in any of these flows.
 
 ## Not verified
