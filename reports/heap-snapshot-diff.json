@@ -1,0 +1,526 @@
+{
+  "note": "Production build, 40 start/play/exit cycles after the teardown fix. Aggregated heap-snapshot self sizes by class, cycle 40 minus cycle 20 (20 cycles). No Pixi or game class appears; the delta is V8 strings/compiled code and browser-native objects (DevTools network records, performance timeline entries and the MessagePort/ReadableStream pair MSW transfers for each of the six touch-icon responses that are re-requested after a forced GC evicts the image memory cache).",
+  "heapByCycle": [
+    {
+      "cycle": 0,
+      "heap": 8431006,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 1,
+      "heap": 8727651,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 2,
+      "heap": 9012137,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 3,
+      "heap": 9111903,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 4,
+      "heap": 9249975,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 5,
+      "heap": 9341403,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 6,
+      "heap": 9387119,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 7,
+      "heap": 9454713,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 8,
+      "heap": 9765355,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 9,
+      "heap": 9799055,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 10,
+      "heap": 9848507,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 11,
+      "heap": 9887043,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 12,
+      "heap": 9909727,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 13,
+      "heap": 9928223,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 14,
+      "heap": 9993139,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 15,
+      "heap": 10007103,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 16,
+      "heap": 10015163,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 17,
+      "heap": 10023831,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 18,
+      "heap": 10056301,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 19,
+      "heap": 10120931,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 20,
+      "heap": 10142047,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 21,
+      "heap": 10159975,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 22,
+      "heap": 10176551,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 23,
+      "heap": 10186863,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 24,
+      "heap": 10196011,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 25,
+      "heap": 10210703,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 26,
+      "heap": 10226079,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 27,
+      "heap": 10241571,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 28,
+      "heap": 10250815,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 29,
+      "heap": 10268427,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 30,
+      "heap": 10275075,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 31,
+      "heap": 10288207,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 32,
+      "heap": 10305755,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 33,
+      "heap": 10321903,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 34,
+      "heap": 10333355,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 35,
+      "heap": 10347683,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 36,
+      "heap": 10357699,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 37,
+      "heap": 10364839,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 38,
+      "heap": 10372567,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 39,
+      "heap": 10385831,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    },
+    {
+      "cycle": 40,
+      "heap": 10394643,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36,
+      "sharedTextureListeners": 0,
+      "canvases": 0
+    }
+  ],
+  "classDeltaCycle20To40": [
+    {
+      "key": "string:(strings)",
+      "count": 82,
+      "bytes": 130144
+    },
+    {
+      "key": "code:(compiled code)",
+      "count": 472,
+      "bytes": 108252
+    },
+    {
+      "key": "native:blink::NetworkResourcesData::ResourceData",
+      "count": 120,
+      "bytes": 34560
+    },
+    {
+      "key": "native:MessagePort",
+      "count": 120,
+      "bytes": 18240
+    },
+    {
+      "key": "native:ReadableStream",
+      "count": 120,
+      "bytes": 10560
+    },
+    {
+      "key": "native:PerformanceResourceTiming",
+      "count": 71,
+      "bytes": 9656
+    },
+    {
+      "key": "native:system / WeakArrayList",
+      "count": 98,
+      "bytes": 9384
+    },
+    {
+      "key": "native:ReadableStreamDefaultController",
+      "count": 120,
+      "bytes": 8640
+    },
+    {
+      "key": "native:blink::HeapHashTableBacking<blink::HashTable<blink::String, ",
+      "count": 0,
+      "bytes": 8192
+    },
+    {
+      "key": "native:blink::HeapHashTableBacking<blink::HashTable<cppgc::internal",
+      "count": 0,
+      "bytes": 8128
+    },
+    {
+      "key": "native:blink::BasicHeapVector<blink::internal::HeapCollectionType::",
+      "count": 240,
+      "bytes": 7680
+    },
+    {
+      "key": "native:blink::ReadableStreamDefaultController::CallPullIfNeededReje",
+      "count": 120,
+      "bytes": 7680
+    },
+    {
+      "key": "native:blink::ReadableStreamDefaultController::CallPullIfNeededReso",
+      "count": 120,
+      "bytes": 7680
+    },
+    {
+      "key": "native:DOMRectReadOnly",
+      "count": 120,
+      "bytes": 6720
+    },
+    {
+      "key": "native:blink::EventTargetData",
+      "count": 120,
+      "bytes": 6720
+    },
+    {
+      "key": "native:PerformanceEventTiming",
+      "count": 24,
+      "bytes": 6144
+    },
+    {
+      "key": "native:LargestContentfulPaint",
+      "count": 44,
+      "bytes": 5984
+    },
+    {
+      "key": "native:EventListener",
+      "count": 240,
+      "bytes": 5760
+    },
+    {
+      "key": "native:blink::QueueWithSizes",
+      "count": 120,
+      "bytes": 4800
+    },
+    {
+      "key": "native:InteractionContentfulPaint",
+      "count": 44,
+      "bytes": 4576
+    },
+    {
+      "key": "native:blink::RegisteredEventListener",
+      "count": 240,
+      "bytes": 3840
+    },
+    {
+      "key": "native:blink::(anonymous namespace)::CrossRealmTransformReadable",
+      "count": 120,
+      "bytes": 3840
+    },
+    {
+      "key": "native:blink::MessagePort::PostMessageTaskContainer",
+      "count": 120,
+      "bytes": 3840
+    },
+    {
+      "key": "native:LayoutShift",
+      "count": 20,
+      "bytes": 3040
+    },
+    {
+      "key": "native:blink::(anonymous namespace)::CrossRealmTransformReadable::P",
+      "count": 120,
+      "bytes": 2880
+    },
+    {
+      "key": "native:blink::(anonymous namespace)::CrossRealmTransformReadable::C",
+      "count": 120,
+      "bytes": 2880
+    },
+    {
+      "key": "native:TaskAttributionTiming",
+      "count": 21,
+      "bytes": 2520
+    },
+    {
+      "key": "native:LayoutShiftAttribution",
+      "count": 60,
+      "bytes": 2400
+    },
+    {
+      "key": "native:PerformanceLongTaskTiming",
+      "count": 21,
+      "bytes": 2184
+    },
+    {
+      "key": "native:blink::(anonymous namespace)::DefaultSizeAlgorithm",
+      "count": 120,
+      "bytes": 1920
+    }
+  ]
+}

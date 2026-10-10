@@ -1,0 +1,118 @@
+{
+  "browser": "156.0.8078.4",
+  "note": "16 cycles with two frames after unmount and precise memory readings; cycle 0 is warm-up.",
+  "samples": [
+    {
+      "cycle": 0,
+      "heap": 8376842,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36
+    },
+    {
+      "cycle": 1,
+      "heap": 8662215,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36
+    },
+    {
+      "cycle": 2,
+      "heap": 8948985,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36
+    },
+    {
+      "cycle": 3,
+      "heap": 9051663,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36
+    },
+    {
+      "cycle": 4,
+      "heap": 9182991,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36
+    },
+    {
+      "cycle": 5,
+      "heap": 9263927,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36
+    },
+    {
+      "cycle": 6,
+      "heap": 9304977,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36
+    },
+    {
+      "cycle": 7,
+      "heap": 9369889,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36
+    },
+    {
+      "cycle": 8,
+      "heap": 9679231,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36
+    },
+    {
+      "cycle": 9,
+      "heap": 9725825,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36
+    },
+    {
+      "cycle": 10,
+      "heap": 9769399,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36
+    },
+    {
+      "cycle": 11,
+      "heap": 9802745,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36
+    },
+    {
+      "cycle": 12,
+      "heap": 9825965,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36
+    },
+    {
+      "cycle": 13,
+      "heap": 9840891,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36
+    },
+    {
+      "cycle": 14,
+      "heap": 9907417,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36
+    },
+    {
+      "cycle": 15,
+      "heap": 9921131,
+      "applications": 0,
+      "displayObjects": 0,
+      "cachedTextures": 36
+    }
+  ]
+}

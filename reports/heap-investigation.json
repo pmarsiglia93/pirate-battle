@@ -1,0 +1,381 @@
+{
+  "note": "Development Strict Mode heap comparison between exits 2 and 12; shallow allocation counts, not retained-size analysis.",
+  "delta": [
+    {
+      "name": "object:Object",
+      "count": 223,
+      "bytes": 5764
+    },
+    {
+      "name": "object:Array",
+      "count": 42,
+      "bytes": 672
+    },
+    {
+      "name": "object:EE",
+      "count": 20,
+      "bytes": 480
+    },
+    {
+      "name": "object:BindGroup",
+      "count": 20,
+      "bytes": 480
+    },
+    {
+      "name": "closure:warnAboutAccessingKey",
+      "count": 1,
+      "bytes": 32
+    },
+    {
+      "name": "object:system / Context / scope @242003",
+      "count": 1,
+      "bytes": 20
+    }
+  ],
+  "owned": {
+    "closure:BatchableGraphics": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:GpuGraphicsContext": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:_GraphicsContext2": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:GraphicsContextRenderData": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:_GraphicsContextSystem2": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:_GraphicsPath": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:_Container": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:_Sprite": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:ViewContainer": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:DOMContainer": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:_Spritesheet2": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:ApplicationInitHook": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:BatchableSprite": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:SpritePipe": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:GpuGraphicsAdaptor": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:GlGraphicsAdaptor": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:CanvasGraphicsAdaptor": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:_CanvasGraphicsContextSystem2": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:CanvasGraphicsPipe": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:_Graphics": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:GraphicsGpuData": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:GraphicsPipe": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:_AnimatedSprite": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:_Application2": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:BitmapTextGraphics": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:CanvasNineSliceSpritePipe": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:CanvasParticleContainerAdaptor": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:CanvasParticleContainerPipe": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:CanvasTilingSpritePipe": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:GlParticleContainerAdaptor": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:GlParticleContainerPipe": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:GpuParticleContainerAdaptor": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:GpuParticleContainerPipe": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:_NineSliceSprite2": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:NineSliceSpriteGpuData": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:NineSliceSpritePipe": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:_ParticleContainer2": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:ParticleContainerPipe": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:RenderContainer": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:_TilingSprite2": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:TilingSpriteGpuData": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:TilingSpritePipe": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:TilingSpriteShader": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:Simulation": {
+      "count": 2,
+      "bytes": 60
+    },
+    "closure:FixedClock": {
+      "count": 2,
+      "bytes": 60
+    },
+    "closure:SpritePool": {
+      "count": 2,
+      "bytes": 60
+    },
+    "closure:PixiRenderer": {
+      "count": 2,
+      "bytes": 60
+    },
+    "object:_Container": {
+      "count": 4,
+      "bytes": 232
+    },
+    "closure:getGraphicsStateKey": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:CanvasGraphicsContext": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:CanvasGraphicsContextRenderData": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:loadAsGraphics": {
+      "count": 1,
+      "bytes": 28
+    },
+    "closure:get domContainerRoot": {
+      "count": 1,
+      "bytes": 28
+    },
+    "closure:_updateBatchableSprite": {
+      "count": 2,
+      "bytes": 56
+    },
+    "closure:_getGpuSprite": {
+      "count": 2,
+      "bytes": 56
+    },
+    "closure:_initGPUSprite": {
+      "count": 2,
+      "bytes": 56
+    },
+    "closure:calculateSpriteMatrix": {
+      "count": 1,
+      "bytes": 28
+    },
+    "object:ViewContainer": {
+      "count": 9,
+      "bytes": 108
+    },
+    "object:_Sprite": {
+      "count": 1,
+      "bytes": 12
+    },
+    "object:BatchableSprite": {
+      "count": 2,
+      "bytes": 24
+    },
+    "object:_Graphics": {
+      "count": 1,
+      "bytes": 12
+    },
+    "object:ParticleContainerPipe": {
+      "count": 3,
+      "bytes": 36
+    },
+    "object:_NineSliceSprite2": {
+      "count": 1,
+      "bytes": 12
+    },
+    "closure:_addContainer": {
+      "count": 1,
+      "bytes": 28
+    },
+    "closure:resolveContainerQueueItem": {
+      "count": 1,
+      "bytes": 28
+    },
+    "closure:resolveGraphicsContextQueueItem": {
+      "count": 1,
+      "bytes": 28
+    },
+    "closure:uploadGraphicsContext": {
+      "count": 1,
+      "bytes": 28
+    },
+    "object:ServiceWorkerContainer (prototype) / http://127.0.0.1:5173": {
+      "count": 1,
+      "bytes": 28
+    },
+    "closure:ServiceWorkerContainer": {
+      "count": 1,
+      "bytes": 32
+    },
+    "object:ServiceWorkerContainer (internal cache) / http://127.0.0.1:5173": {
+      "count": 1,
+      "bytes": 16
+    },
+    "closure:commitHydratedContainer": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:clearContainerSparingly": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:pushHostContainer": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:insertOrAppendPlacementNodeIntoContainer": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:warnIfReactDOMContainerInDEV": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:getOwnerDocumentFromRootContainer": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:popHostContainer": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:updateContainerImpl": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:isValidContainer": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:removeChildFromContainer": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:getFragmentParentInstanceOrContainerFiber": {
+      "count": 1,
+      "bytes": 32
+    },
+    "closure:setSprite": {
+      "count": 1,
+      "bytes": 28
+    },
+    "object:ServiceWorkerContainer": {
+      "count": 1,
+      "bytes": 16
+    },
+    "closure:_initTilingSpriteData": {
+      "count": 1,
+      "bytes": 28
+    },
+    "closure:_getTilingSpriteData": {
+      "count": 1,
+      "bytes": 28
+    },
+    "object:BatchableGraphics": {
+      "count": 8,
+      "bytes": 576
+    }
+  }
+}

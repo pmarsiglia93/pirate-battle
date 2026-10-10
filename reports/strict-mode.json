@@ -1,0 +1,42 @@
+{
+  "mode": "Vite development with React Strict Mode",
+  "cycles": [
+    {
+      "active": {
+        "applications": 1,
+        "displayObjects": 51,
+        "cachedTextures": 36
+      },
+      "after": {
+        "applications": 0,
+        "displayObjects": 0,
+        "cachedTextures": 36
+      }
+    },
+    {
+      "active": {
+        "applications": 1,
+        "displayObjects": 51,
+        "cachedTextures": 36
+      },
+      "after": {
+        "applications": 0,
+        "displayObjects": 0,
+        "cachedTextures": 36
+      }
+    },
+    {
+      "active": {
+        "applications": 1,
+        "displayObjects": 51,
+        "cachedTextures": 36
+      },
+      "after": {
+        "applications": 0,
+        "displayObjects": 0,
+        "cachedTextures": 36
+      }
+    }
+  ],
+  "errors": []
+}

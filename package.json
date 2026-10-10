@@ -13,7 +13,9 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:update": "playwright test --update-snapshots",
-    "perf": "node scripts/perf.mjs"
+    "perf": "node scripts/perf.mjs",
+    "perf:gpu": "PERF_GPU=1 node scripts/perf.mjs",
+    "memory": "node scripts/memory.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.0",
