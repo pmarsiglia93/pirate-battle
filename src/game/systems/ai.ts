@@ -1,4 +1,4 @@
-import { gameConfig } from '../config/gameConfig';
+import { enemySpeedScale, gameConfig } from '../config/gameConfig';
 import type { WorldContext } from '../core/types';
 import { blocked } from '../world/arena';
 import { angleDelta, distance, turnToward } from '../world/geometry';
@@ -33,7 +33,7 @@ export function ai(ctx: WorldContext, dt: number): void {
     enemy.angle = turnToward(enemy.angle, target, config.turnSpeed * dt);
     const range = distance(enemy, player);
     if (enemy.kind === 'chaser' || range > gameConfig.shooter.stopRange)
-      move(enemy, config.speed, dt);
+      move(enemy, config.speed * enemySpeedScale(ctx.state.config), dt);
     if (
       enemy.kind === 'chaser' &&
       distance(enemy, player) < enemy.radius + player.radius

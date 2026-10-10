@@ -1,9 +1,16 @@
 import { useState } from 'react';
 import {
+  difficultyOf,
   gameConfig,
   validOptions,
+  type Difficulty,
   type MatchOptions,
 } from '../game/config/gameConfig';
+const difficultyHelp: Record<Difficulty, string> = {
+  easy: 'Enemies are slower and deal half damage.',
+  normal: 'The standard battle.',
+  hard: 'Enemies are faster and deal 50% more damage.',
+};
 export function Options({
   options,
   onSave,
@@ -80,6 +87,31 @@ export function Options({
             </div>
           );
         })}
+        <div className="field">
+          <label htmlFor="difficulty">Difficulty</label>
+          <select
+            id="difficulty"
+            value={difficultyOf(draft)}
+            aria-describedby="difficulty-help"
+            onChange={(event) =>
+              setDraft({
+                ...draft,
+                difficulty: event.target.value as Difficulty,
+              })
+            }
+          >
+            {(Object.keys(gameConfig.difficulty) as Difficulty[]).map(
+              (value) => (
+                <option key={value} value={value}>
+                  {gameConfig.difficulty[value].label}
+                </option>
+              ),
+            )}
+          </select>
+          <small id="difficulty-help">
+            {difficultyHelp[difficultyOf(draft)]}
+          </small>
+        </div>
         <button className="primary">Save</button>
         <button type="button" className="secondary" onClick={onBack}>
           Main Menu

@@ -1,8 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { Simulation } from '../../src/game/core/simulation';
-import { defaultOptions, gameConfig } from '../../src/game/config/gameConfig';
+import {
+  defaultOptions,
+  gameConfig,
+  validOptions,
+  type MatchOptions,
+} from '../../src/game/config/gameConfig';
+import { configKey } from '../../src/api/contracts';
+import type { Ship } from '../../src/game/core/types';
 import { blocked } from '../../src/game/world/arena';
-import { damage } from '../../src/game/systems/collision';
+import { damage, ram } from '../../src/game/systems/collision';
 import { fire } from '../../src/game/systems/weapons';
 import { FixedClock } from '../../src/game/core/clock';
 const advance = (sim: Simulation, ms: number) =>
@@ -101,5 +108,52 @@ describe('combat invariants', () => {
     expect(sim.state.config.spawnTime).toBe(4);
     expect(next.state.player.hp).toBe(gameConfig.player.hp);
     expect(next.state.enemies).toHaveLength(0);
+  });
+});
+describe('difficulty', () => {
+  const enemy = (kind: 'chaser' | 'shooter'): Ship => ({
+    id: 99,
+    kind,
+    x: 100,
+    y: 100,
+    angle: 0,
+    hp: 40,
+    maxHp: 40,
+    radius: 25,
+    cooldowns: { front: 0, port: 0, starboard: 0 },
+  });
+  it.each([
+    ['easy', 13, 4],
+    ['normal', 25, 8],
+    ['hard', 38, 12],
+  ] as const)(
+    '%s scales Chaser impact and Shooter shots',
+    (difficulty, impact, shot) => {
+      const sim = new Simulation({ ...defaultOptions, difficulty });
+      ram(sim, enemy('chaser'));
+      expect(sim.state.player.hp).toBe(gameConfig.player.hp - impact);
+      fire(sim, enemy('shooter'), 'front');
+      expect(sim.state.projectiles.at(-1)!.damage).toBe(shot);
+    },
+  );
+  it('never changes the player weapons', () => {
+    for (const difficulty of ['easy', 'hard'] as const) {
+      const sim = new Simulation({ ...defaultOptions, difficulty });
+      fire(sim, sim.state.player, 'front');
+      expect(sim.state.projectiles[0]!.damage).toBe(gameConfig.front.damage);
+    }
+  });
+  it('treats a missing difficulty as normal and keeps its ranking key', () => {
+    const legacy: MatchOptions = { sessionTime: 120, spawnTime: 4 };
+    expect(validOptions(legacy)).toBe(true);
+    expect(configKey(legacy)).toBe('120s-4s');
+    expect(configKey({ ...legacy, difficulty: 'normal' })).toBe('120s-4s');
+    expect(configKey({ ...legacy, difficulty: 'easy' })).toBe('120s-4s-easy');
+    expect(validOptions({ ...legacy, difficulty: 'insane' as never })).toBe(
+      false,
+    );
+    const sim = new Simulation(legacy);
+    ram(sim, enemy('chaser'));
+    expect(sim.state.player.hp).toBe(75);
   });
 });

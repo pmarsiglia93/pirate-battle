@@ -89,6 +89,17 @@ All balancing values are centralized in [`gameConfig.ts`](src/game/config/gameCo
 | Shooter                 | 40 HP, 110 px/s, 1.5 rad/s, 360 px attack range, 280 px stopping range    |
 | Shooter shot            | 8 damage, 340 px/s, 2 s lifetime, 1.6 s cooldown                          |
 | Spawn separation        | At least 450 px from player, clear of land and other ships                |
+| Difficulty              | Normal; Options also offers Easy and Hard                                 |
+
+Difficulty changes only what enemies do to the player. Your own weapons, enemy HP and scoring are identical on every level.
+
+| Difficulty | Damage taken | Chaser impact | Shooter shot | Enemy speed |
+| ---------- | -----------: | ------------: | -----------: | ----------: |
+| Easy       |        × 0.5 |            13 |            4 |      × 0.85 |
+| Normal     |          × 1 |            25 |            8 |         × 1 |
+| Hard       |        × 1.5 |            38 |           12 |      × 1.15 |
+
+Normal is the balance requested by the challenge and is the default. Rankings never mix difficulties: each one is a separate battle configuration in the Ranking filter.
 
 The 1.5 second minimum keeps entity growth bounded while permitting a hard mode; 15 seconds allows a calmer game. Requested combat defaults were retained. Wrecks, hit fragments, fire, flashes, explosions and splashes are cosmetic and never collide.
 
@@ -123,7 +134,7 @@ The suite covers the challenge's twelve E2E groups, including actual keyboard mo
 
 `?test=1&seed=42` disables automatic time advancement. `window.__PIRATE_TEST__` exposes `advance(ms)`, `getState()` (a detached serializable snapshot), `setSeed(n)` before the first tick and read-only resource counts. Rules, input handlers, collisions and Pixi rendering remain active. `window.__PIRATE_RESOURCES__()` reports active applications, display objects and cached textures for profiling. These hooks never provide state mutation, teleportation or invulnerability.
 
-The latest full run passed 54 browser cases with 2 skipped: the multitouch and portrait cases apply only to the mobile project and are skipped on desktop, where they have no meaning. All 18 unit tests pass. The HTML report is committed under [`reports/playwright`](reports/playwright/index.html); failed runs retain traces in `test-results/`.
+The latest full run passed 54 browser cases with 2 skipped: the multitouch and portrait cases apply only to the mobile project and are skipped on desktop, where they have no meaning. All 23 unit tests pass. The HTML report is committed under [`reports/playwright`](reports/playwright/index.html); failed runs retain traces in `test-results/`.
 
 ### Benchmarks
 

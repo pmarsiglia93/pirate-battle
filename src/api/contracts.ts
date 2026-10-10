@@ -1,4 +1,4 @@
-import type { MatchOptions } from '../game/config/gameConfig';
+import { difficultyOf, type MatchOptions } from '../game/config/gameConfig';
 import type { EndReason } from '../game/core/types';
 export interface MatchRecord {
   matchId: string;
@@ -18,8 +18,16 @@ export interface Page<T> {
   total: number;
   totalPages: number;
 }
-export const configKey = (config: MatchOptions): string =>
-  `${config.sessionTime}s-${config.spawnTime}s`;
+// 'normal' keeps the original key so records saved before difficulty existed
+// still rank together with new normal matches.
+export const configKey = (config: MatchOptions): string => {
+  const difficulty = difficultyOf(config);
+  return `${config.sessionTime}s-${config.spawnTime}s${difficulty === 'normal' ? '' : `-${difficulty}`}`;
+};
+export function configLabel(key: string): string {
+  const [session = '', spawn = '', difficulty] = key.split('-');
+  return `${session.replace(/s$/, '')} seconds · ${spawn} spawn${difficulty ? ` · ${difficulty}` : ''}`;
+}
 export function compareMatches(a: MatchRecord, b: MatchRecord): number {
   return (
     b.score - a.score ||

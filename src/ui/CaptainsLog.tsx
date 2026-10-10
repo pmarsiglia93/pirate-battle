@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { configKey } from '../api/contracts';
+import { configKey, configLabel } from '../api/contracts';
 import { useMatches } from '../api/queries';
 import type { MatchOptions } from '../game/config/gameConfig';
 import { playerId } from '../persistence/lastResult';
@@ -79,7 +79,7 @@ export function CaptainsLog({
                 ]),
               ].map((value) => (
                 <option key={value} value={value}>
-                  {value.replace('s-', ' seconds · ')} spawn
+                  {configLabel(value)}
                 </option>
               ))}
             </select>

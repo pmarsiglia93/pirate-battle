@@ -26,7 +26,9 @@ Axios receives the Query cancellation signal. Ranking keys contain configuration
 
 A finished match receives a UUID once, then enters the durable pending queue before a PUT starts. PUT is idempotent by that UUID, returning 201 for creation and 200 for an existing record. Success removes the queue entry and invalidates both record queries. Refresh retries pending entries; failures retain them and never block gameplay. localStorage is the demo database, with an in-memory fallback when unavailable. This is a single-browser mock, not a shared leaderboard or authenticated backend.
 
-Ranking order is score descending, duration ascending, ISO timestamp ascending, then match ID lexicographically ascending. Configuration identity is `sessionTime + "s-" + spawnTime + "s"`; rankings never compare different options. The current options are the default filter. Fixtures have fixed timestamps; the local identity is generated once. Scenarios intercept HTTP via the committed MSW worker in development and production.
+Ranking order is score descending, duration ascending, ISO timestamp ascending, then match ID lexicographically ascending. Configuration identity is `sessionTime + "s-" + spawnTime + "s"`, with `-easy` or `-hard` appended for those difficulties; rankings never compare different options. Normal keeps the unsuffixed key, and a missing difficulty means normal, so options and records saved before difficulty existed remain valid and rank with new normal matches.
+
+Difficulty is part of the match options snapshot. It scales only damage dealt to the player and enemy movement speed, through two helpers in `gameConfig.ts`; player weapons, enemy HP, spawning and scoring are untouched, so the simulation stays deterministic for a given seed, inputs and options. The current options are the default filter. Fixtures have fixed timestamps; the local identity is generated once. Scenarios intercept HTTP via the committed MSW worker in development and production.
 
 ## Test boundaries
 

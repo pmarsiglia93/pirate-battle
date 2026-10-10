@@ -1,4 +1,4 @@
-import { gameConfig } from '../config/gameConfig';
+import { damageToPlayer, gameConfig } from '../config/gameConfig';
 import type { Ship, WorldContext } from '../core/types';
 export function damage(
   ctx: WorldContext,
@@ -40,5 +40,10 @@ export function ram(ctx: WorldContext, enemy: Ship): void {
     sprite: 21,
   });
   ctx.emit({ kind: 'explosion', x: enemy.x, y: enemy.y });
-  damage(ctx, ctx.state.player, gameConfig.chaser.impact, false);
+  damage(
+    ctx,
+    ctx.state.player,
+    damageToPlayer(gameConfig.chaser.impact, ctx.state.config),
+    false,
+  );
 }

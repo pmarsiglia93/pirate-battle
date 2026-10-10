@@ -1,4 +1,4 @@
-import { gameConfig } from '../config/gameConfig';
+import { damageToPlayer, gameConfig } from '../config/gameConfig';
 import type { InputState, Ship, WorldContext } from '../core/types';
 export function tickCooldowns(ship: Ship, dt: number): void {
   for (const key of ['front', 'port', 'starboard'] as const)
@@ -41,7 +41,9 @@ export function fire(
       y,
       vx: Math.cos(angle) * speed,
       vy: Math.sin(angle) * speed,
-      damage: config.damage,
+      damage: enemy
+        ? damageToPlayer(config.damage, ctx.state.config)
+        : config.damage,
       life,
     });
     ctx.emit({ kind: 'fire', x, y });

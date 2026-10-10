@@ -22,11 +22,22 @@ test('options validate, save, and survive refresh', async ({ page }) => {
   );
   await page.getByLabel('Game session time').fill('60');
   await page.getByLabel('Enemy spawn time').fill('15');
+  await expect(page.getByLabel('Difficulty')).toHaveValue('normal');
+  await page.getByLabel('Difficulty').selectOption('easy');
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await page.reload();
   await page.getByRole('button', { name: 'Options', exact: true }).click();
   await expect(page.getByLabel('Game session time')).toHaveValue('60');
   await expect(page.getByLabel('Enemy spawn time')).toHaveValue('15');
+  await expect(page.getByLabel('Difficulty')).toHaveValue('easy');
+  await page.getByRole('button', { name: 'Main Menu', exact: true }).click();
+  await page.getByRole('button', { name: 'Play', exact: true }).click();
+  await page.waitForFunction(() => !!window.__PIRATE_TEST__);
+  expect((await state(page)).config).toEqual({
+    sessionTime: 60,
+    spawnTime: 15,
+    difficulty: 'easy',
+  });
 });
 test('asset failure presents Retry and recovers', async ({ page, context }) => {
   await page.route('**/ships/ship_8.png', (route) => route.abort());
