@@ -2,7 +2,7 @@
 
 A playable naval survival game built for the Jungle Gaming challenge. Sail between islands, fire three independent weapons, and survive Chasers and Shooters. React owns the interface; a deterministic TypeScript simulation drives PixiJS v8.
 
-**Deployment:** Vercel configuration is ready. Authentication status and the final publication command are recorded below; no public URL is claimed until deployment succeeds.
+**Play it:** <https://pirate-battle-jungle-gamma.vercel.app>
 
 ![Pirate Battle menu](tests/e2e/visual.spec.ts-snapshots/menu-desktop-linux.png)
 
@@ -147,7 +147,7 @@ npx vercel login
 npx vercel --prod
 ```
 
-The deployed URL and the checks run against it are recorded in [`reports/verification.md`](reports/verification.md).
+Live at <https://pirate-battle-jungle-gamma.vercel.app>. The checks run against it are recorded in [`reports/verification.md`](reports/verification.md).
 
 ## Delivery notes
 
