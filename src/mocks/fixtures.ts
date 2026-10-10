@@ -1,4 +1,5 @@
 import { configKey, type MatchRecord } from '../api/contracts';
+import { loadProfile } from '../persistence/profile';
 export function fixtures(count = 18, localPlayer?: string): MatchRecord[] {
   const names = [
     'Captain Flint',
@@ -17,7 +18,9 @@ export function fixtures(count = 18, localPlayer?: string): MatchRecord[] {
       matchId: `fixture-${i.toString().padStart(3, '0')}`,
       playerId: localPlayer && i % 3 === 0 ? localPlayer : `crew-${i}`,
       playerName:
-        localPlayer && i % 3 === 0 ? 'Captain Jack' : names[i % names.length]!,
+        localPlayer && i % 3 === 0
+          ? loadProfile().name
+          : names[i % names.length]!,
       createdAt: new Date(Date.UTC(2026, 9, 1, 12, i)).toISOString(),
       score: 38 - (i % 30),
       durationMs: config.sessionTime * 1000 - i * 100,

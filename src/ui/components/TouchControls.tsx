@@ -24,11 +24,15 @@ export function TouchControls({ simulation }: { simulation: Simulation }) {
             simulation.input[action] = false;
           }}
         >
-          <img
-            draggable={false}
-            src={`/assets/png/retina/ui/controls/icon_${icon}.png`}
-            alt=""
-          />
+          {icon ? (
+            <img
+              draggable={false}
+              src={`/assets/png/retina/ui/controls/icon_${icon}.png`}
+              alt=""
+            />
+          ) : (
+            <span aria-hidden="true">»</span>
+          )}
         </button>
       ))}
     </div>

@@ -14,7 +14,7 @@ export function worldPoint(
 export const touchActions: {
   action: keyof InputState;
   label: string;
-  icon: string;
+  icon: string | null;
 }[] = [
   { action: 'left', label: 'Turn left', icon: 'turn_left' },
   { action: 'forward', label: 'Sail forward', icon: 'forward' },
@@ -26,4 +26,6 @@ export const touchActions: {
     label: 'Fire starboard broadside',
     icon: 'fire_right',
   },
+  // The art pack has no sprint icon, so this button renders a text glyph.
+  { action: 'sprint', label: 'Sprint', icon: null },
 ];

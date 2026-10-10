@@ -9,6 +9,9 @@ export function Controls() {
         <kbd>D</kbd> / ← → Turn
       </span>
       <span>
+        <kbd>Shift</kbd> Sprint
+      </span>
+      <span>
         <kbd>Space</kbd> Fire
       </span>
       <span>

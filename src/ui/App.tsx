@@ -9,6 +9,7 @@ import {
   playerId,
 } from '../persistence/lastResult';
 import { configKey, type MatchRecord } from '../api/contracts';
+import { loadProfile, saveProfile } from '../persistence/profile';
 import type { GameState } from '../game/core/types';
 import { loadAssets } from '../game/render/assets';
 import { unlockAudio } from '../game/render/audio';
@@ -25,6 +26,9 @@ export function App() {
     loadLastResult() ? 'result' : 'menu',
   );
   const [options, setOptions] = useState(loadOptions);
+  const [profile, setProfile] = useState(loadProfile);
+  const nameRef = useRef(profile.name);
+  nameRef.current = profile.name;
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState(false);
   const attempt = useRef(0);
@@ -60,7 +64,7 @@ export function App() {
     const record: MatchRecord = {
       matchId: matchId.current,
       playerId: playerId(),
-      playerName: 'Captain Jack',
+      playerName: nameRef.current,
       createdAt: new Date().toISOString(),
       score: state.score,
       durationMs: Math.round(state.elapsed * 1000),
@@ -78,6 +82,7 @@ export function App() {
       <Game
         key={matchId.current}
         options={options}
+        ship={profile.ship}
         onExit={menu}
         onFinish={finish}
       />
@@ -100,7 +105,7 @@ export function App() {
           </button>
           <img
             className="mascot"
-            src="/assets/png/retina/ships/ship_2.png"
+            src={`/assets/png/retina/ships/ship_${profile.ship}.png`}
             alt=""
           />
           <p>Navigate the islands. Survive the battle.</p>
@@ -116,13 +121,21 @@ export function App() {
           <NetworkPanel onRetry={submissions.retry} />
         </section>
       ) : screen === 'ranking' || screen === 'history' ? (
-        <CaptainsLog initialTab={screen} options={options} onBack={menu} />
+        <CaptainsLog
+          initialTab={screen}
+          options={options}
+          name={profile.name}
+          onBack={menu}
+        />
       ) : screen === 'options' ? (
         <Options
           options={options}
-          onSave={(value) => {
+          profile={profile}
+          onSave={(value, captain) => {
             saveOptions(value);
             setOptions(value);
+            saveProfile(captain);
+            setProfile(captain);
             setScreen('menu');
           }}
           onBack={menu}

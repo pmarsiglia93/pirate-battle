@@ -8,6 +8,8 @@ import {
 } from '../../src/game/config/gameConfig';
 import { configKey } from '../../src/api/contracts';
 import type { Ship } from '../../src/game/core/types';
+import { resolveSeed } from '../../src/game/core/testApi';
+import { validName, validShip } from '../../src/persistence/profile';
 import { blocked } from '../../src/game/world/arena';
 import { damage, ram } from '../../src/game/systems/collision';
 import { fire } from '../../src/game/systems/weapons';
@@ -155,5 +157,74 @@ describe('difficulty', () => {
     const sim = new Simulation(legacy);
     ram(sim, enemy('chaser'));
     expect(sim.state.player.hp).toBe(75);
+  });
+});
+describe('sprint', () => {
+  // Sail east along the open top lane so no island or border cuts the run short.
+  const startX = 200;
+  const sail = (sprint: boolean, ms: number) => {
+    const sim = new Simulation({ sessionTime: 60, spawnTime: 15 });
+    Object.assign(sim.state.player, { x: startX, y: 70, angle: 0 });
+    sim.input.forward = true;
+    sim.input.sprint = sprint;
+    advance(sim, ms);
+    return sim;
+  };
+  it('boosts speed only for its duration', () => {
+    const { duration, multiplier } = gameConfig.sprint;
+    const normal = sail(false, 1000).state.player.x - startX;
+    const boosted = sail(true, 1000).state.player.x - startX;
+    expect(normal).toBeCloseTo(gameConfig.player.speed, 5);
+    expect(boosted).toBeCloseTo(normal * multiplier, 5);
+    // Held for 3 s: boosted for the duration, normal speed for the rest.
+    const held = sail(true, 3000).state.player.x - startX;
+    expect(held).toBeCloseTo(
+      gameConfig.player.speed * (duration * multiplier + (3 - duration)),
+      5,
+    );
+  });
+  it('cannot be used again before its cooldown and recharges after it', () => {
+    const sim = sail(true, 100);
+    expect(sim.state.sprint.active).toBeGreaterThan(0);
+    advance(sim, 3000);
+    expect(sim.state.sprint.active).toBe(0);
+    expect(sim.state.sprint.cooldown).toBeGreaterThan(0);
+    advance(sim, 2000);
+    expect(sim.state.sprint.active).toBeGreaterThan(0);
+  });
+  it('does not recharge while paused', () => {
+    const sim = sail(true, 100);
+    sim.pause();
+    const before = sim.snapshot().sprint;
+    advance(sim, 10000);
+    expect(sim.state.sprint).toEqual(before);
+  });
+});
+describe('match seed and captain profile', () => {
+  const random = () => 987654;
+  it('is random for players, fixed for tests and replayable on request', () => {
+    expect(resolveSeed(new URLSearchParams(''), random)).toBe(987654);
+    expect(resolveSeed(new URLSearchParams('test=1'), random)).toBe(42);
+    expect(resolveSeed(new URLSearchParams('seed=7'), random)).toBe(7);
+    expect(resolveSeed(new URLSearchParams('test=1&seed=7'), random)).toBe(7);
+    expect(resolveSeed(new URLSearchParams('seed=abc'), random)).toBe(987654);
+  });
+  it('different seeds spawn enemies in different places', () => {
+    const first = (seed: number) => {
+      const sim = new Simulation(defaultOptions, seed);
+      advance(sim, 4100);
+      return sim.state.enemies[0]!;
+    };
+    const a = first(1),
+      b = first(2);
+    expect([a.x, a.y]).not.toEqual([b.x, b.y]);
+  });
+  it('validates names and ships', () => {
+    expect(validName('Bo')).toBe(false);
+    expect(validName('   Bo   ')).toBe(false);
+    expect(validName('Anne Bonny')).toBe(true);
+    expect(validName('x'.repeat(17))).toBe(false);
+    expect(validShip(4)).toBe(true);
+    expect(validShip(3)).toBe(false);
   });
 });

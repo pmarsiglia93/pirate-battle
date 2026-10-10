@@ -3,7 +3,7 @@ import type { MatchOptions } from '../game/config/gameConfig';
 import { Simulation } from '../game/core/simulation';
 import type { GameState } from '../game/core/types';
 import { FixedClock } from '../game/core/clock';
-import { testMode } from '../game/core/testApi';
+import { resolveSeed, testMode } from '../game/core/testApi';
 import { createGameStore } from '../game/bridge/gameStore';
 import { bindKeyboard } from '../game/input/keyboard';
 import { PixiRenderer, resourceSnapshot } from '../game/render/PixiRenderer';
@@ -20,10 +20,12 @@ import { TouchControls } from './components/TouchControls';
 import { formatTime } from './Result';
 export function Game({
   options,
+  ship,
   onExit,
   onFinish,
 }: {
   options: MatchOptions;
+  ship: number;
   onExit: () => void;
   onFinish: (state: GameState) => void;
 }) {
@@ -31,7 +33,10 @@ export function Game({
     () =>
       new Simulation(
         options,
-        Number(new URLSearchParams(location.search).get('seed') ?? 42),
+        resolveSeed(
+          new URLSearchParams(location.search),
+          () => crypto.getRandomValues(new Uint32Array(1))[0]!,
+        ),
       ),
   );
   const [store] = useState(() => createGameStore(simulation));
@@ -59,7 +64,7 @@ export function Game({
   };
   useEffect(() => {
     let cancelled = false;
-    const renderer = new PixiRenderer();
+    const renderer = new PixiRenderer(ship);
     const gameClock = new FixedClock((dt) => {
       simulation.step(dt);
       playEvents(simulation.events);
@@ -147,13 +152,16 @@ export function Game({
       if (testMode() && simulation.state.status !== 'ended')
         delete window.__PIRATE_TEST__;
     };
-  }, [simulation, store]);
+  }, [simulation, store, ship]);
   return (
     <div className="game-screen">
       <div className="hud">
         <span className="health-counter">♥ {hud.hp} / 100</span>
         <span>★ {hud.score}</span>
         <span>◷ {formatTime(hud.remaining)}</span>
+        <span className={`sprint-status sprint-${hud.sprint}`}>
+          » {hud.sprint === 'ready' ? 'Sprint' : hud.sprint}
+        </span>
         <button
           aria-label={muted ? 'Unmute sound' : 'Mute sound'}
           onClick={() => {
@@ -179,6 +187,8 @@ export function Game({
         <dd>{hud.remaining}</dd>
         <dt>State</dt>
         <dd>{hud.status}</dd>
+        <dt>Sprint</dt>
+        <dd>{hud.sprint}</dd>
       </dl>
       {error && (
         <div className="overlay">

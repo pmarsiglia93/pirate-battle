@@ -264,6 +264,101 @@ test('repeated exits abandon matches and release canvases', async ({
     await page.evaluate(() => localStorage.getItem('pirate:lastResult')),
   ).toBeNull();
 });
+test('sprint boosts the ship and then has to recharge', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Keyboard sprint; the touch button has its own test');
+  await start(page);
+  const y0 = (await state(page)).player.y;
+  await hold(page, 'w', 1000);
+  const normal = y0 - (await state(page)).player.y;
+  await page.keyboard.down('Shift');
+  await hold(page, 'w', 1000);
+  const sprinting = await state(page);
+  const boosted = y0 - normal - sprinting.player.y;
+  expect(boosted).toBeGreaterThan(normal * 1.5);
+  expect(sprinting.sprint.active).toBeGreaterThan(0);
+  await expect(page.locator('.sprint-status')).toHaveText('» active');
+  // Still holding Shift: the boost ends and cannot restart during cooldown.
+  await hold(page, 'w', 1000);
+  const cooling = await state(page);
+  expect(cooling.sprint.active).toBe(0);
+  expect(cooling.sprint.cooldown).toBeGreaterThan(0);
+  await expect(page.locator('.sprint-status')).toHaveText('» recharging');
+  await page.keyboard.up('Shift');
+  // 5 s cooldown from activation; 2 s have passed, so allow the rest plus a tick.
+  await advance(page, 3100);
+  expect((await state(page)).sprint.cooldown).toBe(0);
+  await expect(page.locator('.sprint-status')).toHaveText('» Sprint');
+});
+test('touch sprint button boosts while sailing', async ({
+  page,
+  context,
+  isMobile,
+}) => {
+  test.skip(!isMobile, 'Touch-specific coverage');
+  await start(page);
+  const centre = async (name: string) => {
+    const box = (await page
+      .getByRole('button', { name, exact: true })
+      .boundingBox())!;
+    return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  };
+  const cdp = await context.newCDPSession(page);
+  await cdp.send('Input.dispatchTouchEvent', {
+    type: 'touchStart',
+    touchPoints: [
+      { ...(await centre('Sail forward')), id: 1 },
+      { ...(await centre('Sprint')), id: 2 },
+    ],
+  });
+  await advance(page, 1000);
+  const s = await state(page);
+  await cdp.send('Input.dispatchTouchEvent', {
+    type: 'touchEnd',
+    touchPoints: [],
+  });
+  expect(s.sprint.active).toBeGreaterThan(0);
+  // One second at normal speed covers 160 px; the boost must beat that clearly.
+  expect(450 - s.player.y).toBeGreaterThan(160 * 1.5);
+});
+test('captain name and ship are validated, saved and used in records', async ({
+  page,
+}) => {
+  await page.goto('/?test=1&seed=42');
+  await page.getByRole('button', { name: 'Options', exact: true }).click();
+  await expect(page.getByLabel('Captain name')).toHaveValue('Captain Jack');
+  await page.getByLabel('Captain name').fill('Bo');
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.getByLabel('Captain name')).toHaveAttribute(
+    'aria-invalid',
+    'true',
+  );
+  await page.getByLabel('Captain name').fill('Anne Bonny II');
+  await page.getByRole('radio', { name: 'Green Blades' }).check();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await page.reload();
+  await page.getByRole('button', { name: 'Options', exact: true }).click();
+  await expect(page.getByLabel('Captain name')).toHaveValue('Anne Bonny II');
+  await expect(page.getByRole('radio', { name: 'Green Blades' })).toBeChecked();
+  await page.getByRole('button', { name: 'Main Menu', exact: true }).click();
+  await page.getByRole('button', { name: 'Play', exact: true }).click();
+  await page.waitForFunction(() => !!window.__PIRATE_TEST__);
+  await finish(page);
+  await expect(page.getByRole('status')).toHaveText('Saved');
+  await page.getByRole('button', { name: 'Main Menu', exact: true }).click();
+  await page.getByRole('button', { name: 'Ranking', exact: true }).click();
+  await page.getByRole('button', { name: 'Next page' }).click();
+  await page.getByRole('button', { name: 'Next page' }).click();
+  await expect(
+    page.getByRole('cell', { name: 'Anne Bonny II', exact: false }),
+  ).toBeVisible();
+  await page.getByRole('tab', { name: 'Match History', exact: true }).click();
+  await expect(
+    page.getByText('ANNE BONNY II · YOUR RECENT BATTLES'),
+  ).toBeVisible();
+});
 test('repeated matches release every Pixi application, scene and listener', async ({
   page,
 }) => {

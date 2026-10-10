@@ -28,6 +28,12 @@ A finished match receives a UUID once, then enters the durable pending queue bef
 
 Ranking order is score descending, duration ascending, ISO timestamp ascending, then match ID lexicographically ascending. Configuration identity is `sessionTime + "s-" + spawnTime + "s"`, with `-easy` or `-hard` appended for those difficulties; rankings never compare different options. Normal keeps the unsuffixed key, and a missing difficulty means normal, so options and records saved before difficulty existed remain valid and rank with new normal matches.
 
+The captain's name and ship colour live in a separate local profile, not in the match options: they are cosmetic, so they must not create new ranking configurations. The simulation never sees the ship colour; the renderer maps the player's hull and wreck sprites to the chosen family.
+
+Sprint is simulation state (`sprint.active`, `sprint.cooldown`) ticked with the fixed step, so it pauses, replays and tests like every other cooldown. Its numbers are in `gameConfig.sprint`.
+
+The seed comes from `resolveSeed`: an explicit `?seed=` wins, test mode defaults to 42, and a normal match draws a random one. Earlier builds always used 42, which made every real match spawn enemies in the same places.
+
 Difficulty is part of the match options snapshot. It scales only damage dealt to the player and enemy movement speed, through two helpers in `gameConfig.ts`; player weapons, enemy HP, spawning and scoring are untouched, so the simulation stays deterministic for a given seed, inputs and options. The current options are the default filter. Fixtures have fixed timestamps; the local identity is generated once. Scenarios intercept HTTP via the committed MSW worker in development and production.
 
 ## Test boundaries
@@ -48,7 +54,7 @@ Ownership follows the match. One `Game` effect creates the simulation, clock, in
 
 - Asynchronous `Application.init()` can finish after React has unmounted, which Strict Mode does on every development mount. A cancellation flag makes the late completion destroy itself, and `destroy()` is idempotent.
 - `Application.destroy()` removes the canvas, ticker and scene children. Healthbar `Graphics` are destroyed with `context: true` so their owned geometry contexts go too. Pools drop their sprite references.
-- Textures are shared, not owned by a match. Pixi `Assets` keeps all 36 decoded for the life of the page so a rematch starts instantly. When the last application exits, their GPU handles are unloaded; the next match re-uploads on first use.
+- Textures are shared, not owned by a match. Pixi `Assets` keeps all 48 decoded for the life of the page so a rematch starts instantly. When the last application exits, their GPU handles are unloaded; the next match re-uploads on first use.
 - PixiJS 8.22's `GlBackBufferSystem` never destroys its blit shader, whose bind group stays subscribed to the global `Texture.WHITE` source. That retained one bind group and one listener per destroyed application. `PixiRenderer.destroy()` destroys the shader itself. This reads a private field, so it is guarded, and `Shader.destroy()` is idempotent in case the library fixes it.
 - An E2E test plays four consecutive matches and requires zero applications, zero display objects, zero canvases, a constant texture cache and a constant listener count on Pixi's built-in textures. The last check is what would catch the back-buffer leak returning.
 

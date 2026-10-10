@@ -44,6 +44,7 @@ export class PixiRenderer {
   private initialized = false;
   private disposed = false;
   private resizeObserver: ResizeObserver | null = null;
+  constructor(private playerShip = 2) {}
   async init(host: HTMLElement): Promise<void> {
     await this.app.init({
       width: host.clientWidth,
@@ -129,7 +130,9 @@ export class PixiRenderer {
         progress = 1 - e.life / e.maxLife;
       s.texture = texture(
         e.kind === 'wreck'
-          ? `ships/ship_${e.sprite}`
+          ? // The simulation tags the player's wreck as 20; the hull colour is a
+            // cosmetic choice it does not know about.
+            `ships/ship_${e.sprite === 20 ? this.playerShip + 18 : e.sprite}`
           : e.kind === 'hit' || e.kind === 'damage'
             ? 'ship_parts/wood_1'
             : `effects/explosion_${Math.min(3, 1 + Math.floor(progress * 3))}`,
@@ -167,7 +170,12 @@ export class PixiRenderer {
       view = { root, sprite, bar, fire, lastHp: -1 };
       this.ships.set(ship.id, view);
     }
-    const base = ship.kind === 'player' ? 2 : ship.kind === 'chaser' ? 3 : 5,
+    const base =
+        ship.kind === 'player'
+          ? this.playerShip
+          : ship.kind === 'chaser'
+            ? 3
+            : 5,
       stage =
         ship.hp / ship.maxHp > 0.66 ? 0 : ship.hp / ship.maxHp > 0.33 ? 6 : 12;
     view.sprite.texture = texture(`ships/ship_${base + stage}`);

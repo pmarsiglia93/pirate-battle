@@ -7,7 +7,7 @@ import {
   type WorldContext,
 } from './types';
 import type { GameEvent } from './events';
-import { movePlayer } from '../systems/movement';
+import { movePlayer, tickSprint } from '../systems/movement';
 import { playerWeapons, tickCooldowns } from '../systems/weapons';
 import { projectiles } from '../systems/projectiles';
 import { ai } from '../systems/ai';
@@ -64,6 +64,7 @@ export class Simulation implements WorldContext {
       status: 'running',
       endReason: null,
       config: { ...options },
+      sprint: { active: 0, cooldown: 0 },
       spawnCount: 0,
       nextSpawn: options.spawnTime,
     };
@@ -91,7 +92,8 @@ export class Simulation implements WorldContext {
     for (const effect of this.state.effects) effect.life -= dt;
     this.state.effects = this.state.effects.filter((effect) => effect.life > 0);
     tickCooldowns(this.state.player, dt);
-    movePlayer(this.state.player, this.input, dt);
+    tickSprint(this.state.sprint, this.input, dt);
+    movePlayer(this.state.player, this.input, dt, this.state.sprint.active > 0);
     playerWeapons(this, this.input);
     projectiles(this, dt);
     finishIfNeeded(this);

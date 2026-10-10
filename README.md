@@ -64,6 +64,7 @@ The only environment variable is `VITE_API_TIMEOUT_MS` (default `2500`). Vite re
 | Front cannon        | Space                                  | Front cannon button |
 | Port broadside      | Q                                      | Left cannon button  |
 | Starboard broadside | E                                      | Right cannon button |
+| Sprint              | Shift                                  | » button            |
 | Pause               | P / Escape                             | Pause               |
 | Resume              | Resume button / Escape in pause dialog | Resume              |
 
@@ -101,11 +102,17 @@ Difficulty changes only what enemies do to the player. Your own weapons, enemy H
 
 Normal is the balance requested by the challenge and is the default. Rankings never mix difficulties: each one is a separate battle configuration in the Ranking filter.
 
+**Sprint** multiplies the ship's speed by 1.75 for 1.5 seconds and can be used again 5 seconds after it was activated. The HUD shows whether it is ready, active or recharging. It only affects forward speed, so you still have to hold the sail key.
+
+**Ship** in Options picks one of four hull colours (Black Flag, White Sail, Green Blades, Gold Cross). It is cosmetic; red and blue stay reserved for the Chaser and the Shooter. All six ship families in the art pack are now in use.
+
+Enemy spawn positions and types are drawn from a seeded generator. A normal match gets a fresh random seed, so enemies arrive from different places every battle. Add `?seed=N` to the URL to replay a specific battle; test mode (`?test=1`) defaults to seed 42.
+
 The 1.5 second minimum keeps entity growth bounded while permitting a hard mode; 15 seconds allows a calmer game. Requested combat defaults were retained. Wrecks, hit fragments, fire, flashes, explosions and splashes are cosmetic and never collide.
 
 ## Ranking, history and network scenarios
 
-The local captain is `Captain Jack`; their UUID persists across refresh. Other captains are deterministic fixtures. Rankings compare only identical session/spawn settings. Order is score descending, duration ascending, timestamp ascending, then match ID ascending. History is newest first. Each page contains five rows.
+The local captain is `Captain Jack` until you set a **Captain name** in Options (3–16 characters); the name is stamped on each new record, and earlier records keep the name they were saved with. The captain's UUID persists across refresh. Other captains are deterministic fixtures. Rankings compare only identical session/spawn settings. Order is score descending, duration ascending, timestamp ascending, then match ID ascending. History is newest first. Each page contains five rows.
 
 Open **Network scenarios** on the main menu, or append `?scenario=NAME`. A URL parameter overrides the stored scenario. The panel selection persists. **Reset mock data** restores the selected scenario's fixtures and clears pending submissions. Select `many-pages` and reset to create extended ranking/history fixtures. Scenarios cannot change combat.
 
@@ -134,7 +141,7 @@ The suite covers the challenge's twelve E2E groups, including actual keyboard mo
 
 `?test=1&seed=42` disables automatic time advancement. `window.__PIRATE_TEST__` exposes `advance(ms)`, `getState()` (a detached serializable snapshot), `setSeed(n)` before the first tick and read-only resource counts. Rules, input handlers, collisions and Pixi rendering remain active. `window.__PIRATE_RESOURCES__()` reports active applications, display objects and cached textures for profiling. These hooks never provide state mutation, teleportation or invulnerability.
 
-The latest full run passed 54 browser cases with 2 skipped: the multitouch and portrait cases apply only to the mobile project and are skipped on desktop, where they have no meaning. All 23 unit tests pass. The HTML report is committed under [`reports/playwright`](reports/playwright/index.html); failed runs retain traces in `test-results/`.
+The latest full run passed 58 browser cases with 4 skipped: the multitouch, touch-sprint and portrait cases apply only to the mobile project, and the keyboard-sprint case only to desktop. All 29 unit tests pass. The HTML report is committed under [`reports/playwright`](reports/playwright/index.html); failed runs retain traces in `test-results/`.
 
 ### Benchmarks
 
@@ -147,7 +154,7 @@ The performance harness uses real keyboard events and `requestAnimationFrame` in
 
 The 60 FPS target is met with a GPU and not met on the software rasterizer. The game's own script work is 0.43 ms per frame in both. A peak of 28 simulation entities and 100 display objects was observed. [`reports/performance.md`](reports/performance.md) has the full method, the before/after comparison, the memory investigation and the raw data files. These numbers describe one machine and are not a claim about unmeasured devices.
 
-Repeated matches release every Pixi application, canvas and scene object. One real leak was found and fixed: PixiJS 8.22 leaves one shader bind group subscribed to a global texture for each destroyed application. The 36 game textures stay cached between matches on purpose.
+Repeated matches release every Pixi application, canvas and scene object. One real leak was found and fixed: PixiJS 8.22 leaves one shader bind group subscribed to a global texture for each destroyed application. The 48 game textures stay cached between matches on purpose (36 when the benchmarks were recorded, before the extra ship colours were added).
 
 ## Deployment
 

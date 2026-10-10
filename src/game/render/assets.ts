@@ -3,7 +3,9 @@ const variant = devicePixelRatio >= 2 ? 'retina' : 'default';
 export const assetPath = (name: string): string =>
   `/assets/png/${variant}/${name}.png`;
 const names = [
-  ...[2, 8, 14, 20, 3, 9, 15, 21, 5, 11, 17, 23].map((n) => `ships/ship_${n}`),
+  // All six ship families (n, n+6, n+12, n+18): four are selectable by the
+  // player, red and blue are the enemies.
+  ...Array.from({ length: 24 }, (_, i) => `ships/ship_${i + 1}`),
   ...[1, 2, 3, 17, 18, 19, 23, 24, 33, 34, 35, 49, 71, 73].map(
     (n) => `tiles/tile_${n}`,
   ),

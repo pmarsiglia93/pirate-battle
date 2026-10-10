@@ -9,6 +9,8 @@ const mapping: Record<string, keyof InputState> = {
   Space: 'front',
   KeyQ: 'port',
   KeyE: 'starboard',
+  ShiftLeft: 'sprint',
+  ShiftRight: 'sprint',
 };
 export function bindKeyboard(
   getInput: () => InputState,

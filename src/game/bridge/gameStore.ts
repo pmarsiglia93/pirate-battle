@@ -5,6 +5,7 @@ export interface Hud {
   score: number;
   remaining: number;
   status: string;
+  sprint: 'ready' | 'active' | 'recharging';
   announcement: string;
 }
 export function createGameStore(simulation: Simulation) {
@@ -14,6 +15,7 @@ export function createGameStore(simulation: Simulation) {
     score: 0,
     remaining: simulation.state.config.sessionTime,
     status: 'running',
+    sprint: 'ready',
     announcement: '',
   };
   const listeners = new Set<() => void>();
@@ -27,7 +29,14 @@ export function createGameStore(simulation: Simulation) {
     getSnapshot: () => value,
     publish: (force = false) => {
       const s = simulation.state;
+      const sprint =
+        s.sprint.active > 0
+          ? 'active'
+          : s.sprint.cooldown > 0
+            ? 'recharging'
+            : 'ready';
       const discrete =
+        sprint !== value.sprint ||
         s.player.hp !== value.hp ||
         s.score !== value.score ||
         s.status !== value.status;
@@ -53,6 +62,7 @@ export function createGameStore(simulation: Simulation) {
         score: s.score,
         remaining: Math.max(0, Math.ceil(s.config.sessionTime - s.elapsed)),
         status: s.status,
+        sprint,
         announcement,
       };
       listeners.forEach((listener) => listener());

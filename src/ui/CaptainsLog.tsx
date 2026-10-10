@@ -7,10 +7,12 @@ import { formatTime } from './Result';
 export function CaptainsLog({
   initialTab,
   options,
+  name,
   onBack,
 }: {
   initialTab: 'ranking' | 'history';
   options: MatchOptions;
+  name: string;
   onBack: () => void;
 }) {
   const [tab, setTab] = useState(initialTab),
@@ -85,7 +87,7 @@ export function CaptainsLog({
             </select>
           </label>
         ) : (
-          <p>CAPTAIN JACK · YOUR RECENT BATTLES</p>
+          <p>{name.toUpperCase()} · YOUR RECENT BATTLES</p>
         )}
       </div>
       <div

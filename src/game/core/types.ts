@@ -7,6 +7,7 @@ export interface InputState {
   front: boolean;
   port: boolean;
   starboard: boolean;
+  sprint: boolean;
 }
 export const emptyInput = (): InputState => ({
   forward: false,
@@ -15,6 +16,7 @@ export const emptyInput = (): InputState => ({
   front: false,
   port: false,
   starboard: false,
+  sprint: false,
 });
 export type ShipKind = 'player' | 'chaser' | 'shooter';
 export interface Ship {
@@ -50,6 +52,8 @@ export interface GameState {
   status: MatchStatus;
   endReason: EndReason | null;
   config: MatchOptions;
+  // Seconds of boost left and seconds until the next sprint is available.
+  sprint: { active: number; cooldown: number };
   spawnCount: number;
   nextSpawn: number;
 }

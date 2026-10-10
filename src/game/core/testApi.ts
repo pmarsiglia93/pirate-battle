@@ -16,5 +16,16 @@ declare global {
     };
   }
 }
+// Tests need a fixed seed to be reproducible; players need a different battle
+// every time. An explicit ?seed= always wins so any match can be replayed.
+export function resolveSeed(
+  params: URLSearchParams,
+  random: () => number,
+): number {
+  const explicit = params.get('seed');
+  if (explicit !== null && Number.isFinite(Number(explicit)))
+    return Number(explicit);
+  return params.get('test') === '1' ? 42 : random();
+}
 export const testMode = (): boolean =>
   new URLSearchParams(location.search).get('test') === '1';

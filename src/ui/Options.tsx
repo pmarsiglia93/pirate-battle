@@ -6,6 +6,12 @@ import {
   type Difficulty,
   type MatchOptions,
 } from '../game/config/gameConfig';
+import {
+  nameLimits,
+  shipChoices,
+  validName,
+  type Profile,
+} from '../persistence/profile';
 const difficultyHelp: Record<Difficulty, string> = {
   easy: 'Enemies are slower and deal half damage.',
   normal: 'The standard battle.',
@@ -13,14 +19,18 @@ const difficultyHelp: Record<Difficulty, string> = {
 };
 export function Options({
   options,
+  profile,
   onSave,
   onBack,
 }: {
   options: MatchOptions;
-  onSave: (options: MatchOptions) => void;
+  profile: Profile;
+  onSave: (options: MatchOptions, profile: Profile) => void;
   onBack: () => void;
 }) {
   const [draft, setDraft] = useState(options);
+  const [captain, setCaptain] = useState(profile);
+  const nameInvalid = !validName(captain.name);
   const [submitted, setSubmitted] = useState(false);
   const fields = [
     {
@@ -47,9 +57,51 @@ export function Options({
         onSubmit={(event) => {
           event.preventDefault();
           setSubmitted(true);
-          if (validOptions(draft)) onSave(draft);
+          if (validOptions(draft) && !nameInvalid)
+            onSave(draft, { ...captain, name: captain.name.trim() });
         }}
       >
+        <div className="field">
+          <label htmlFor="captain-name">Captain name</label>
+          <input
+            id="captain-name"
+            type="text"
+            maxLength={nameLimits.max}
+            autoComplete="nickname"
+            value={captain.name}
+            aria-invalid={submitted && nameInvalid}
+            aria-describedby="captain-name-help"
+            onChange={(event) =>
+              setCaptain({ ...captain, name: event.target.value })
+            }
+          />
+          <small
+            id="captain-name-help"
+            className={submitted && nameInvalid ? 'error' : ''}
+          >
+            {nameLimits.min}–{nameLimits.max} characters, shown in the ranking
+            {submitted && nameInvalid ? ' — enter a valid name.' : ''}
+          </small>
+        </div>
+        <fieldset className="field ship-picker">
+          <legend>Ship</legend>
+          {shipChoices.map((choice) => (
+            <label key={choice.id}>
+              <input
+                type="radio"
+                name="ship"
+                value={choice.id}
+                checked={captain.ship === choice.id}
+                onChange={() => setCaptain({ ...captain, ship: choice.id })}
+              />
+              <img
+                src={`/assets/png/retina/ships/ship_${choice.id}.png`}
+                alt=""
+              />
+              <span>{choice.label}</span>
+            </label>
+          ))}
+        </fieldset>
         {fields.map((field) => {
           const invalid =
             !Number.isFinite(draft[field.key]) ||

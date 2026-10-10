@@ -16,6 +16,8 @@ export const gameConfig = {
   clock: { dt: 1 / 60, maxSteps: 8, hudInterval: 0.1 },
   limits: { sessionMin: 60, sessionMax: 180, spawnMin: 1.5, spawnMax: 15 },
   player: { hp: 100, speed: 160, turnSpeed: 2.2, radius: 25, x: 800, y: 450 },
+  // A burst of speed with its own cooldown, counted from activation.
+  sprint: { multiplier: 1.75, duration: 1.5, cooldown: 5 },
   front: { damage: 10, speed: 520, life: 1.1, cooldown: 0.45 },
   broadside: { damage: 8, speed: 520, life: 1.1, cooldown: 1.4, spacing: 18 },
   chaser: { hp: 30, speed: 150, turnSpeed: 1.8, radius: 24, impact: 25 },
