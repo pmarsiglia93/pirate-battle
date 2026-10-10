@@ -11,7 +11,9 @@ export function PauseDialog({
     const dialog = ref.current!;
     const previous = document.activeElement;
     dialog.showModal();
-    dialog.querySelector('button')?.focus();
+    Array.from(dialog.querySelectorAll('button'))
+      .find((button) => button.getClientRects().length > 0)
+      ?.focus();
     return () => {
       dialog.close();
       if (previous instanceof HTMLElement) previous.focus();
@@ -24,8 +26,9 @@ export function PauseDialog({
       aria-labelledby="pause-title"
       onKeyDown={(event) => {
         if (event.key !== 'Tab') return;
-        const buttons =
-          ref.current!.querySelectorAll<HTMLButtonElement>('button');
+        const buttons = Array.from(
+          ref.current!.querySelectorAll<HTMLButtonElement>('button'),
+        ).filter((button) => button.getClientRects().length > 0);
         const first = buttons[0],
           last = buttons[buttons.length - 1];
         if (event.shiftKey && document.activeElement === first) {
@@ -42,6 +45,11 @@ export function PauseDialog({
       }}
     >
       <section className="panel">
+        <div className="pause-rotate">
+          <span>↻</span>
+          <h2>Turn the tide</h2>
+          <p>Rotate your device to landscape to play.</p>
+        </div>
         <h1 id="pause-title">Paused</h1>
         <p>Ready when you are.</p>
         <button className="primary" autoFocus onClick={onResume}>

@@ -35,3 +35,11 @@ export async function loadAssets(
 }
 export const texture = (name: string): Texture =>
   Assets.get<Texture>(assetPath(name));
+
+export const cachedTextureCount = (): number =>
+  names.filter((name) => Assets.cache.has(assetPath(name))).length;
+
+export function releaseGpuHandles(): void {
+  for (const name of names)
+    if (Assets.cache.has(assetPath(name))) texture(name).source.unload();
+}

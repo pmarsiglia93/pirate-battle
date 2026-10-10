@@ -28,11 +28,11 @@ export function fire(
     : [0]) {
     const x =
         ship.x +
-        Math.cos(angle) * (ship.radius + 8) +
+        Math.cos(angle) * (ship.radius + gameConfig.muzzleOffset) +
         Math.cos(ship.angle) * offset,
       y =
         ship.y +
-        Math.sin(angle) * (ship.radius + 8) +
+        Math.sin(angle) * (ship.radius + gameConfig.muzzleOffset) +
         Math.sin(ship.angle) * offset;
     ctx.state.projectiles.push({
       id: ctx.nextId(),

@@ -8,6 +8,12 @@ export interface PirateTestApi {
 declare global {
   interface Window {
     __PIRATE_TEST__?: PirateTestApi;
+    __PIRATE_RESOURCES__?: () => {
+      applications: number;
+      displayObjects: number;
+      cachedTextures: number;
+      sharedTextureListeners: number;
+    };
   }
 }
 export const testMode = (): boolean =>

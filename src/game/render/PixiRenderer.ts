@@ -1,8 +1,16 @@
-import { Application, Container, Graphics, Sprite } from 'pixi.js';
+import {
+  Application,
+  Container,
+  Graphics,
+  Sprite,
+  Texture,
+  TilingSprite,
+  type Shader,
+} from 'pixi.js';
 import { gameConfig } from '../config/gameConfig';
 import type { GameState, Ship } from '../core/types';
 import { landTiles, islands } from '../world/arena';
-import { texture } from './assets';
+import { texture, cachedTextureCount, releaseGpuHandles } from './assets';
 import { SpritePool } from './spritePool';
 interface ShipView {
   lastHp: number;
@@ -10,6 +18,22 @@ interface ShipView {
   sprite: Sprite;
   bar: Graphics;
   fire: Sprite;
+}
+const activeRenderers = new Set<PixiRenderer>();
+export function resourceSnapshot() {
+  return {
+    applications: activeRenderers.size,
+    displayObjects: [...activeRenderers].reduce(
+      (sum, renderer) => sum + renderer.stats().displayObjects,
+      0,
+    ),
+    cachedTextures: cachedTextureCount(),
+    // Pixi's built-in textures outlive every application, so listeners left on
+    // them are the observable trace of renderer objects that were not released.
+    sharedTextureListeners:
+      Texture.WHITE.source.listenerCount('change') +
+      Texture.EMPTY.source.listenerCount('change'),
+  };
 }
 export class PixiRenderer {
   readonly app = new Application();
@@ -19,14 +43,16 @@ export class PixiRenderer {
   private effects = new SpritePool(this.scene);
   private initialized = false;
   private disposed = false;
+  private resizeObserver: ResizeObserver | null = null;
   async init(host: HTMLElement): Promise<void> {
     await this.app.init({
-      width: gameConfig.world.width,
-      height: gameConfig.world.height,
+      width: host.clientWidth,
+      height:
+        (host.clientWidth * gameConfig.world.height) / gameConfig.world.width,
       resolution: Math.min(devicePixelRatio, 2),
       autoDensity: true,
       background: '#278da3',
-      antialias: true,
+      antialias: false,
       preference: 'webgl',
     });
     this.initialized = true;
@@ -34,18 +60,15 @@ export class PixiRenderer {
       this.destroy();
       return;
     }
+    activeRenderers.add(this);
     host.appendChild(this.app.canvas);
     this.app.canvas.setAttribute('aria-label', 'Pirate Battle arena');
     this.app.stage.addChild(this.scene);
     const { tile, width, height } = gameConfig.world;
-    for (let y = 0; y < height; y += tile)
-      for (let x = 0; x < width; x += tile) {
-        const s = new Sprite(texture('tiles/tile_73'));
-        s.position.set(x, y);
-        s.width = tile;
-        s.height = tile;
-        this.scene.addChild(s);
-      }
+    const waterTexture = texture('tiles/tile_73');
+    const water = new TilingSprite({ texture: waterTexture, width, height });
+    water.tileScale.set(tile / waterTexture.width);
+    this.scene.addChild(water);
     for (const tileInfo of landTiles) {
       const s = new Sprite(texture(`tiles/tile_${tileInfo.sprite}`));
       s.position.set(tileInfo.x, tileInfo.y);
@@ -64,6 +87,19 @@ export class PixiRenderer {
         s.height = tile;
         this.scene.addChild(s);
       }
+    const resize = () => {
+      if (!this.initialized || this.disposed) return;
+      const width = host.clientWidth;
+      this.app.renderer.resize(
+        width,
+        (width * gameConfig.world.height) / gameConfig.world.width,
+      );
+      this.scene.scale.set(width / gameConfig.world.width);
+      this.app.render();
+    };
+    resize();
+    this.resizeObserver = new ResizeObserver(resize);
+    this.resizeObserver.observe(host);
   }
   render(state: GameState): void {
     if (!this.initialized || this.disposed) return;
@@ -73,7 +109,7 @@ export class PixiRenderer {
       ids = new Set(living.map((ship) => ship.id));
     for (const [id, view] of this.ships)
       if (!ids.has(id)) {
-        view.root.destroy({ children: true });
+        view.root.destroy({ children: true, context: true });
         this.ships.delete(id);
       }
     for (const ship of living) this.drawShip(ship, state.elapsed);
@@ -161,17 +197,34 @@ export class PixiRenderer {
     return {
       displayObjects:
         this.initialized && !this.disposed ? count(this.app.stage) : 0,
-      pooledSprites: this.bullets.size + this.effects.size,
+      pooledSprites: this.disposed ? 0 : this.bullets.size + this.effects.size,
     };
   }
   destroy(): void {
     this.disposed = true;
+    activeRenderers.delete(this);
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
     if (!this.initialized) return;
     this.initialized = false;
+    // Pixi 8.22's GlBackBufferSystem.destroy() does not destroy its blit shader,
+    // whose BindGroup stays subscribed to the global Texture.WHITE source: one
+    // retained BindGroup and listener per Application. Shader.destroy() is
+    // idempotent, so this stays harmless once the library releases it itself.
+    const backBuffer = (
+      this.app.renderer as unknown as {
+        backBuffer?: { _bigTriangleShader?: Shader | null };
+      }
+    ).backBuffer;
+    const blitShader = backBuffer?._bigTriangleShader;
     this.app.destroy(
       { removeView: true },
-      { children: true, texture: false, textureSource: false },
+      { children: true, context: true, texture: false, textureSource: false },
     );
+    blitShader?.destroy();
     this.ships.clear();
+    this.bullets.clear();
+    this.effects.clear();
+    if (activeRenderers.size === 0) releaseGpuHandles();
   }
 }

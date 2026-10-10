@@ -14,10 +14,10 @@ export function ai(ctx: WorldContext, dt: number): void {
     tickCooldowns(enemy, dt);
     let target = Math.atan2(player.y - enemy.y, player.x - enemy.x);
     // Test candidate headings across a 110 px feeler, choosing the least deviation.
-    for (const offset of [0, 0.5, -0.5, 1, -1, 1.5, -1.5, 2, -2, Math.PI]) {
+    for (const offset of gameConfig.ai.avoidanceAngles) {
       const heading = target + offset;
       if (
-        [35, 70, 110].every(
+        gameConfig.ai.avoidanceDistances.every(
           (length) =>
             !blocked(
               enemy.x + Math.cos(heading) * length,
@@ -47,7 +47,7 @@ export function ai(ctx: WorldContext, dt: number): void {
           enemy.angle,
           Math.atan2(player.y - enemy.y, player.x - enemy.x),
         ),
-      ) < 0.22
+      ) < gameConfig.ai.fireAngleTolerance
     )
       fire(ctx, enemy, 'front');
   }

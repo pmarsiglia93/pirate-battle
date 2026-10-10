@@ -26,6 +26,12 @@ export const gameConfig = {
   spawn: { distance: 450, chaserChance: 0.55, attempts: 200 },
   effects: { wreckLife: 1.8, life: 0.65, flashLife: 0.14, shake: 5 },
   projectileRadius: 5,
+  muzzleOffset: 8,
+  ai: {
+    avoidanceDistances: [35, 70, 110],
+    avoidanceAngles: [0, 0.5, -0.5, 1, -1, 1.5, -1.5, 2, -2, Math.PI],
+    fireAngleTolerance: 0.22,
+  },
 } as const;
 export function validOptions(value: MatchOptions): boolean {
   if (!value || typeof value !== 'object') return false;

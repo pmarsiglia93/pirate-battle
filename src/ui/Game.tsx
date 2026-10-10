@@ -6,7 +6,7 @@ import { FixedClock } from '../game/core/clock';
 import { testMode } from '../game/core/testApi';
 import { createGameStore } from '../game/bridge/gameStore';
 import { bindKeyboard } from '../game/input/keyboard';
-import { PixiRenderer } from '../game/render/PixiRenderer';
+import { PixiRenderer, resourceSnapshot } from '../game/render/PixiRenderer';
 import {
   isMuted,
   setMuted,
@@ -49,6 +49,8 @@ export function Game({
     store.publish(true);
   };
   const resume = () => {
+    if (matchMedia('(pointer: coarse) and (orientation: portrait)').matches)
+      return;
     simulation.resume();
     clock.current?.reset();
     store.publish(true);
@@ -76,6 +78,13 @@ export function Game({
     const visibility = () => {
       if (document.hidden) stop();
     };
+    if (testMode()) window.__PIRATE_RESOURCES__ = resourceSnapshot;
+    const orientation = () => {
+      if (matchMedia('(pointer: coarse) and (orientation: portrait)').matches)
+        stop();
+    };
+    window.addEventListener('resize', orientation);
+    orientation();
     const unbind = bindKeyboard(
       () => simulation.input,
       () =>
@@ -130,6 +139,7 @@ export function Game({
       cancelled = true;
       unbind();
       window.removeEventListener('blur', stop);
+      window.removeEventListener('resize', orientation);
       document.removeEventListener('visibilitychange', visibility);
       gameClock.reset();
       stopAudio();

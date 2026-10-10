@@ -253,6 +253,36 @@ test('repeated exits abandon matches and release canvases', async ({
     await page.evaluate(() => localStorage.getItem('pirate:lastResult')),
   ).toBeNull();
 });
+test('repeated matches release every Pixi application, scene and listener', async ({
+  page,
+}) => {
+  await page.goto('/?test=1&seed=42');
+  const samples = [];
+  for (let i = 0; i < 4; i++) {
+    await page.getByRole('button', { name: 'Play', exact: true }).click();
+    await page.waitForFunction(
+      () => window.__PIRATE_TEST__?.getState().status === 'running',
+    );
+    await hold(page, ' ', 3000);
+    const during = await page.evaluate(() => window.__PIRATE_RESOURCES__!());
+    expect(during.applications).toBe(1);
+    expect(during.displayObjects).toBeGreaterThan(0);
+    await page.getByRole('button', { name: 'Pause', exact: true }).click();
+    await page.getByRole('button', { name: 'Main Menu', exact: true }).click();
+    await expect(page.locator('canvas')).toHaveCount(0);
+    samples.push(await page.evaluate(() => window.__PIRATE_RESOURCES__!()));
+  }
+  for (const sample of samples) {
+    expect(sample.applications).toBe(0);
+    expect(sample.displayObjects).toBe(0);
+    // The texture cache is intentionally warm; it must neither grow nor empty.
+    expect(sample.cachedTextures).toBe(samples[0]!.cachedTextures);
+    // Listeners on Pixi's global textures must not accumulate per match.
+    expect(sample.sharedTextureListeners).toBe(
+      samples[0]!.sharedTextureListeners,
+    );
+  }
+});
 test('mobile multitouch sails and fires simultaneously', async ({
   page,
   context,
@@ -307,4 +337,25 @@ test('refresh abandons an unfinished battle without recording it', async ({
   await expect(
     page.getByText('No battles recorded yet.', { exact: false }),
   ).toBeVisible();
+});
+
+test('portrait pauses until the captain explicitly resumes in landscape', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(!isMobile, 'Mobile orientation coverage');
+  await start(page);
+  await advance(page, 1000);
+  await page.setViewportSize({ width: 412, height: 915 });
+  await expect(
+    page.getByRole('heading', { name: 'Turn the tide' }),
+  ).toBeVisible();
+  const before = await state(page);
+  expect(before.status).toBe('paused');
+  await advance(page, 5000);
+  expect(await state(page)).toEqual(before);
+  await page.setViewportSize({ width: 915, height: 412 });
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.getByRole('button', { name: 'Resume', exact: true }).click();
+  expect((await state(page)).status).toBe('running');
 });

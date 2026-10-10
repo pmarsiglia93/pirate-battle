@@ -26,6 +26,10 @@ export class SpritePool {
       draw(sprite, item.id);
     }
   }
+  clear(): void {
+    this.used.clear();
+    this.free = [];
+  }
   get size(): number {
     return this.free.length + this.used.size;
   }

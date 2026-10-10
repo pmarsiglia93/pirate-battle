@@ -713,3 +713,21 @@ td:nth-child(3) {
     font-size: 12px;
   }
 }
+
+.pause-rotate {
+  display: none;
+}
+@media (pointer: coarse) and (orientation: portrait) {
+  .pause-rotate {
+    display: block;
+  }
+  .pause-rotate > span {
+    font-size: 56px;
+  }
+  .pause-dialog .primary {
+    display: none;
+  }
+  .game-screen:has(dialog[open]) > .rotate-notice {
+    display: none;
+  }
+}
