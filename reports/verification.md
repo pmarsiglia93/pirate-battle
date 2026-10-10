@@ -1,6 +1,6 @@
 # Release verification
 
-The full verification below ran on 2026-10-10 (UTC) at commit `d81aac7`. The difficulty option was added afterwards in `d22be24`, which is the commit now deployed; later commits change documentation only. For `d22be24` the working-tree typecheck, lint, 23 unit tests, build and the full Playwright suite (54 passed, 2 skipped, visual baselines unchanged) were rerun, and the live site was smoke-tested again. The clean-checkout, benchmark and memory runs were not repeated for it; the change does not touch rendering or teardown.
+The full verification below ran on 2026-10-10 (UTC) at commit `d81aac7`. Two feature commits followed: difficulty (`d22be24`) and captain name, ship choice, sprint and random spawn seed (`90b6a0f`). `90b6a0f` is the commit now deployed; later commits change documentation only. For it, the working-tree typecheck, lint, 29 unit tests, build and the full Playwright suite (58 passed, 4 skipped) were rerun and the live site was smoke-tested again. Three visual baselines were regenerated after review for the sprint indicator, legend entry and touch button. The clean-checkout, benchmark and memory runs were not repeated for these commits; the texture cache is now 48 entries instead of the 36 recorded in the performance report.
 
 ## Automated checks
 
@@ -48,6 +48,7 @@ Browser smoke test against the live URL, Chromium 156:
 - Mobile landscape with touch input sails the ship; portrait shows the rotate notice.
 - A completed match shows Battle complete, registers as Saved, survives a refresh and appears in Match History.
 - After the `d22be24` redeploy: Options offers Easy, Normal and Hard; an Easy match starts with that difficulty in its configuration, completes and registers as Saved.
+- After the `90b6a0f` redeploy: a captain name and ship saved in Options are used by the next match; Shift activates sprint and the HUD shows it; the finished match appears in Match History and in the Ranking under the new name; two different seeds spawn the first enemy in different places.
 - No uncaught page errors, console errors, failed requests or HTTP errors in any of these flows.
 
 ## Not verified
